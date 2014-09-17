@@ -82,7 +82,7 @@ The WebPay API consists of the entrypoint methods in the WebPay and WebPayAdmin 
 Most service requests are synchronous and return a response immediately. For asynchronous hosted service payment requests, the customer will be redirected to i.e. the selected card payment provider or bank, and you will get a callback to a return url, where where you receive and parse the response.
 
 ### Namespaces
-The package makes use of PHP namespaces, grouping most classes under the namespace Svea. The entrypoint classes WebPay, WebPayAdmin and associated support classes are excluded from the Svea namespace. The underlying internal services and methods are contained in the Svea sub-namespaces WebService, HostedService and AdminService.
+The package makes use of PHP namespaces, grouping most classes under the namespace Svea. The entrypoint classes WebPay, WebPayAdmin and associated support classes are excluded from the Svea namespace. The underlying internal services and methods are contained in the Svea sub-namespaces WebService, HostedService and AdminService. 
 
 See the PHP documentation for more information on [namespaces in PHP](http://php.net/manual/en/language.namespaces.php).
 
