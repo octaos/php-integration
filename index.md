@@ -8,6 +8,7 @@ layout: index
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
+
 * [I. Introduction](http://sveawebpay.github.io/php-integration#introduction)
 * [1. Installing and configuration](http://sveawebpay.github.io/php-integration#i1)
 * [2. "Hello World"](http://sveawebpay.github.io/php-integration#i2)
@@ -67,7 +68,7 @@ layout: index
 This file contains an overview and examples how to use the Svea API through the WebPay and WebPayAdmin entrypoint classes. The complete integration package is documented by generated documentation in the apidoc folder.
 
 ### Svea API
-The WebPay and WebPayAdmin classes make up the Svea API. Together they provide unified entrypoints to the various Svea web services. The API also encompass the support classes ConfigurationProvider, SveaResponse and WebPayItem, as well as various constant container classes.
+The WebPay and WebPayAdmin classes make up the Svea API. Together they provide unified entrypoints to the various Svea web services. The API also encompass the support classes ConfigurationProvider, SveaResponse and WebPayItem, as well as various constant container classes and support classes.
 
 The WebPay class methods contains the functions needed to create orders and perform payment requests using Svea payment methods. It contains methods to define order contents, send order requests, as well as support methods needed to do this.
 
