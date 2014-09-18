@@ -125,7 +125,7 @@ See further the <a href="http://sveawebpay.github.io/php-integration/api/classes
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
-## 2. "Hello World" <a name="i2"></a>
+## 2. "hello World" <a name="i2"></a>
 An example of the WebPay API workflow is the following invoice payment, where we wish to perform an invoice order. Assume that we have already collected all needed order data, and will now build an order containing the ordered items (with price, article number info, et al) and customer information (name, address, et al), select a payment method, and send the payment request to Svea.
 
 ### 2.1 A complete invoice order
