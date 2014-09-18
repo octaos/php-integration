@@ -228,6 +228,7 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Create
 Order row, fee and discount items can be added to the order. Together the row items amount add up to the order total to pay.
 
 ```php
+<?php
 ...
 $myOrderRow = WebPayItem::orderRow();       // create the order row object
 
@@ -253,6 +254,7 @@ Customer identity is required for Invoice and Payment plan orders. For Card and 
 
 ####3.3.1 Options for individual customers
 ```php
+<?php
 ...
 $order->
     ...
@@ -275,6 +277,7 @@ See [5.7](http://sveawebpay.github.io/php-integration#57) and 5.8 in the WebPayI
 Set any additional attributes needed to complete the order using the OrderBuilder methods.
 
 ```php
+<?php
 ...
 $order
     ...
@@ -352,6 +355,7 @@ Select payment method to use with the CreateOrderBuilder class useXX() methods, 
 Select ->useInvoicePayment() to perform an invoice payment.
 
 ```php
+<?php
 ...
 $order = WebPay::createOrder($config);
 $order
@@ -377,6 +381,7 @@ The Payment plan payment method is restricted to individual customers and can no
 First use WebPay::getPaymentPlanParams() to get the various campaigns. Then chose a campaign to pass as parameter to the usePaymentPlanPayment() method.
 
 ```php
+<?php
 ...
 // fetch all available campaigns from Svea
 $campaignsRequest = WebPay::getPaymentPlanParams($config);
@@ -408,6 +413,7 @@ Select i.e. ->usePaymentMethod(PaymentMethod::KORTCERT) to perform a card paymen
 Get a html form containing the request XML data. The form is an instance of PaymentForm, and also contains the complete html form as a string along with the form elements in an array.
 
 ```php
+<?php
 ...
 $form = $order
     ->usePaymentMethod(PaymentMethod::KORTCERT)             // Card payment, get available providers using WebPay::listPaymentMethods()
@@ -424,6 +430,7 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Hosted
 Get an url containing a link to the prepared payment. To get a payment url you need to supply the customer ip address and language in the order request.
 
 ```php
+<?php
 ...
 $form = $order
 
@@ -452,6 +459,7 @@ An example of an recurring card order, both the setup transaction and a recurrin
 Select i.e. ->usePaymentMethod(PaymentMethod::NORDEA_SE) to perform a direct bank transfer payment using the Swedish bank Nordea.
 
 ```php
+<?php
 ...
 $form = $order
     ->usePaymentMethod(PaymentMethod::NORDEA_SE)            // Direct bank payment, get available banks using WebPay::listPaymentMethods()
@@ -470,6 +478,7 @@ Go direct to specified payment method, bypassing the *PayPage* completely. By sp
 You can use `WebPay::listPaymentMethods()` to get the various payment methods available.
 
 ```php
+<?php
 ...
 $form = $order
     ->usePaymentMethod(PaymentMethod::KORTCERT)             // Use WebPay::listPaymentMethods() to get available payment methods
@@ -484,6 +493,7 @@ $form = $order
 Send user to *PayPage* to select from available cards (only), and then perform a card payment at the card payment page.
 
 ```php
+<?php
 ...
 $form = $order
     ->usePayPageCardOnly()
@@ -502,6 +512,7 @@ A complete, runnable example of a card order using PaymentMethodPayment can be f
 Send user to *PayPage* to select from available banks (only), and then perform a direct bank payment at the chosen bank
 
 ```php
+<?php
 ...
 $form = $order
     ->usePayPageDirectBankOnly()
@@ -517,6 +528,7 @@ $form = $order
 Send user to *PayPage* to select from the available payment methods.
 
 ```php
+<?php
 ...
 $form = $order
     ->usePayPage()
@@ -562,6 +574,7 @@ Use this to add all kinds of products and other items. An order is required to h
 
 #### 5.2.1 Usage
 ```php
+<?php
 ...
 $order->
     addOrderRow(
@@ -588,6 +601,7 @@ Use this class to add shipping fee to the order.
 #### 5.3.1 Usage
 
 ```php
+<?php
 ...
 $order->
     addFee(
@@ -616,6 +630,7 @@ Specify the price using precisely two of these methods in order to specify the i
 `setAmountExVat()`, `setAmountIncVat()` and `setVatPercent()`. We recommend specifying price using `setAmountExVat()` and `setVatPercentage()`.
 
 ```php
+<?php
 ...
 $order->
     addFee(
@@ -643,6 +658,7 @@ If only AmountIncVat is given, we calculate the discount split across the tax (v
 Otherwise, it is required to use at least two of the functions `setAmountExVat()`, `setAmountIncVat()` and `setVatPercent()`. If two of these three attributes are specified, we respect the amount indicated and include a discount with the appropriate tax rate.
 
 ```php
+<?php
 ...
 $order->
     addDiscount(
@@ -666,6 +682,7 @@ Use this method when the discount or coupon is expressed as a percentage of the 
 
 #### 5.6.1 Usage
 ```php
+<?php
 ...
 $order->
     addDiscount(
@@ -686,6 +703,7 @@ See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Re
 Read "required" below as a requirement only when the IndividualCustomer is used to identify the customer when using the invoice or payment plan payment methods. (For card and direct bank orders, adding customer information to the order is optional.)
 
 ```php
+<?php
 ...
 $order->
     addCustomerDetails(
@@ -712,6 +730,7 @@ See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.In
 Read "required" below as a requirement only when the CompanyCustomer is used to identify the customer when using the invoice or payment plan payment methods. (For card and direct bank orders, adding customer information to the order is optional.)
 
 ```php
+<?php
 ...
 $order->
     addCustomerDetails(
@@ -737,6 +756,7 @@ This is an extension of the orderRow class, used in the WebPayAdmin::queryOrder(
 
 #### 5.9.1 Usage
 ```php
+<?php
 ...
 $myNumberedOrderRow =
     WebPayItem::numberedOrderRow()
@@ -922,6 +942,7 @@ The following methods are deprecated starting with 2.2 of the package
 
 #### 6.3.2 getAddresses request example (new style)
 ```php
+<?php
 $response = WebPay::getAddresses( $config )
     ->setCountryCode("SE")                  // Required -- supply the country code that corresponds to the account credentials used
     ->setCustomerIdentifier("194605092222") // Required -- SE individual requires a "personnummer"
@@ -932,6 +953,7 @@ $response = WebPay::getAddresses( $config )
 
 #### 6.3.3 getAddresses request example (old style, deprecated)
 ```php
+<?php
 $response = WebPay::getAddresses( $config )
     ->setCountryCode("SE")                  // Required -- supply the country code that corresponds to the account credentials used
     ->setOrderTypeInvoice()                 // Required -- use invoice account credentials for getAddresses lookup
@@ -946,6 +968,7 @@ An complete usage example can be found in the <a href="http://github.com/sveaweb
 Use getPaymentPlanParams() to fetch all campaigns associated with a given client number before creating the payment plan payment.
 
 ```php
+<?php
 ...
 $response =
     WebPay::getPaymentPlanParams($config)
@@ -957,6 +980,8 @@ $response =
 The response is an instance of WebService\PaymentPlanParamsResponse, with the available campaigns in the array campaignCodes:
 
 ```php
+<?php
+...
     $response->accepted                 // true iff request was accepted by the service
     $response->errormessage             // may be set iff accepted above is false
     $response->resultcode               // 27xxx, reason
@@ -973,6 +998,7 @@ The response is an instance of WebService\PaymentPlanParamsResponse, with the av
        ->numberOfPaymentFreeMonths
        ->fromAmount                        // amount lower limit for plan availability
        ->toAmount                          // amount upper limit for plan availability
+...
 ```
 
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.GetPaymentPlanParams.html" target="_blank">GetPaymentPlanParams</a> and <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.PaymentPlanParamsResponse.html" target="_blank">PaymentPlanParamsResponse</a> classes.
@@ -995,9 +1021,12 @@ send the request using ListPaymentMethod methods.
 Following the `->doRequest` call you receive an instance of ListPaymentMethodsResponse:
 
 ```php
+<?php
+...
 $fooArray = WebPay::listPaymentMethods( $config )     // optional, if no $config given, will use defaults from SveaConfig
                   ->setContryCode("SE")               // optional, if no country given, will use default country "SE"
                   ->doRequest();
+...
 ```
 
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/WebPay.html#method_listPaymentMethods" target="_blank">WebPay::listPaymentMethods()</a> and <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.ListPaymentMethodsResponse.html" target="_blank">ListPaymentMethodsResponse</a> classes.
@@ -1036,6 +1065,7 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Hosted
 
 #### 7.1.2 Example
 ```php
+<?php
 ...
 $request =
     WebPay::cancelOrder($config)
@@ -1058,12 +1088,15 @@ Query information about an order. Supports all order payment methods.
 Provide more information about the transaction and send the request using QueryOrderBuilder methods:
 
 ```
+<?php
+...
 ->setOrderId()
 ->setCountryCode()
 
 Then select the correct ordertype and perform the request:
 ->queryInvoiceOrder() | queryPaymentPlanOrder() | queryCardOrder() | queryDirectBankOrder()
   ->doRequest()
+...
 ```
 
 The final doRequest() returns either a GetOrdersResponse or an QueryTransactionResponse
@@ -1192,6 +1225,8 @@ Add order rows to an order. Supports Invoice and Payment Plan orders. (Card and 
 Provide information about the new order rows and send the request using addOrderRowsBuilder methods:
 
 ```
+<?php
+...
 ->setOrderId()
 ->setCountryCode()
 ->addOrderRow() (one or more)
@@ -1200,6 +1235,7 @@ Provide information about the new order rows and send the request using addOrder
 Finish by selecting the correct ordertype and perform the request:
 ->addInvoiceOrderRows() | addPaymentPlanOrderRows()
   ->doRequest()
+...
 ```
 
 The final doRequest() returns an AddOrderRowsResponse
@@ -1220,6 +1256,8 @@ Update order rows in a non-delivered invoice or payment plan order. (Card and Di
 Provide information about the updated order rows and send the request using updateOrderRowsBuilder methods:
 
 ```
+<?php
+...
 ->setOrderId()
 ->setCountryCode()
 ->updateOrderRow() (one or more)
@@ -1228,6 +1266,7 @@ Provide information about the updated order rows and send the request using upda
 Finish by selecting the correct ordertype and perform the request:
 ->updateInvoiceOrderRows() | updatePaymentPlanOrderRows()
   ->doRequest()
+...
 ```
 
 The final doRequest() returns an UpdateOrderRowsResponse
@@ -1304,7 +1343,10 @@ Asynchronous payment request responses (i.e. card and direct bank payments) need
 First, create an instance of SveaResponse, pass it the resulting xml response as part of the $_REQUEST response along with the a ConfigurationProvider and countryCode, then receive a HostedResponse instance by calling the getResponse() method, passing in the message sent to the return url, the request countrycode and configuration. An example of how to process the response received in the $_REQUEST superglobal:
 
 ```php
+<?php
+...
   $response = (new SveaResponse($_REQUEST,$countryCode,$config))->getResponse();
+...
 ```
 
 #### 8.1.2
