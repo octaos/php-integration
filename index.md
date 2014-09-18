@@ -1,7 +1,7 @@
 ---
 layout: index
 ---
-# Svea PHP Integration Package Documentation
+# Svea PHP Integration Package documentation
 
 ## Version 2.2.0
 
