@@ -1,7 +1,7 @@
 ---
 layout: index
 ---
-# Svea PHP Integration Package documentation
+# Svea PHP Integration Package Documentation
 
 ## Version 2.2.0
 
@@ -125,7 +125,7 @@ See further the <a href="http://sveawebpay.github.io/php-integration/api/classes
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
-## 2. "hello World" <a name="i2"></a>
+## 2. "Hello World" <a name="i2"></a>
 An example of the WebPay API workflow is the following invoice payment, where we wish to perform an invoice order. Assume that we have already collected all needed order data, and will now build an order containing the ordered items (with price, article number info, et al) and customer information (name, address, et al), select a payment method, and send the payment request to Svea.
 
 ### 2.1 A complete invoice order
@@ -216,6 +216,7 @@ We show how to specify an order, working through the various steps and options a
 Start by creating an order using the WebPay::createOrder method. Pass in your configuration and get an instance of OrderBuilder in return.
 
 ```php
+<?php
 ...
 $myOrder = WebPay::createOrder($myConfig);
 ...
