@@ -945,6 +945,7 @@ Then use either getIndividualAddresses() or getCompanyAddresses() depending on w
 The final doRequest() will send the getAddresses request to Svea and return the result. 
 
 The following methods are deprecated starting with 2.2 of the package:
+
 ```php
 <?php
 ...
