@@ -815,7 +815,7 @@ For card orders, the deliver order request confirms the card transaction, which 
 Get an order builder instance using the WebPay::deliverOrder entrypoint, then provide more information about the transaction and send the request using the DeliverOrderBuilder methods:
 
 ```php
-
+<?php
 ...
 ->setOrderId()                   (invoice or payment plan, required)
 ->setTransactionId()             (card only, required -- you can also use setOrderId)
@@ -829,7 +829,6 @@ Get an order builder instance using the WebPay::deliverOrder entrypoint, then pr
 Finish by selecting the correct ordertype and perform the request:
 ->deliverInvoiceOrder() // deliverPaymentPlanOrder() or deliverCardOrder()
   ->doRequest()
-
 ...
 ```
 
@@ -904,6 +903,9 @@ Use getAddresses() to fetch a list of validated addresses associated with a give
 
 Get an request class instance using the WebPay::getAddresses entrypoint, then provide more information about the transaction and send the request using the request class methods:
 
+```php
+<?php
+...
 ->setCountryCode()           (required -- supply the country code that corresponds to the account credentials used for the address lookup) 
 ->setIdentifier()            (required -- i.e. the social security number, company vat number et al for the country in question)
 
@@ -916,6 +918,8 @@ The following methods are deprecated starting with 2.2 of the package
 Finish by selecting the correct customer type and perform the request:
 ->getIndividualAddresses() // or getCompanyAddresses()
   ->doRequest()
+...
+```
 
 The final doRequest() returns a GetAddressesResponse.
 
@@ -932,19 +936,24 @@ The GetAddresses service is only applicable for SE, NO and DK customers and acco
 Use setCountryCode() to supply the country code that corresponds to the account credentials used for the address lookup. Note that this means that you cannot look up a user in a foreign country, this is a consequence of the fact that the invoice and partpayment methods don't support foreign orders.
 
 Use setCustomerIdentifier() to provide the exact credentials needed to identify the customer according to country:
-SE: Personnummer (private individual) or Organisationsnummer (company or other legal entity)
-NO: Organisasjonsnummer (company or other legal entity)
-DK: Cpr.nr (private individual) or CVR-nummer (company or other legal entity)
+* SE: Personnummer (private individual) or Organisationsnummer (company or other legal entity)
+* NO: Organisasjonsnummer (company or other legal entity)
+* DK: Cpr.nr (private individual) or CVR-nummer (company or other legal entity)
 
 Then use either getIndividualAddresses() or getCompanyAddresses() depending on what kind of customer you want to look up.
  
 The final doRequest() will send the getAddresses request to Svea and return the result. 
 
-The following methods are deprecated starting with 2.2 of the package
+The following methods are deprecated starting with 2.2 of the package:
+```php
+<?php
+...
 ->setIndividual()                    (deprecated, -- lookup the address of a private individual, set to i.e. social security number)
 ->setCompany()                       (deprecated -- lookup the addresses associated with a legal entity (i.e. company)
 ->setOrderTypeInvoice()              (deprecated -- supply the method that corresponds to the account credentials used for the address lookup)
 ->setOrderTypePaymentPlan()          (deprecated -- supply the method that corresponds to the account credentials used for the address lookup)
+...
+```
 
 #### 6.3.2 getAddresses request example (new style)
 ```php
