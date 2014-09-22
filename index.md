@@ -814,6 +814,9 @@ For card orders, the deliver order request confirms the card transaction, which 
 
 Get an order builder instance using the WebPay::deliverOrder entrypoint, then provide more information about the transaction and send the request using the DeliverOrderBuilder methods:
 
+```php
+
+...
 ->setOrderId()                   (invoice or payment plan, required)
 ->setTransactionId()             (card only, required -- you can also use setOrderId)
 ->setCountryCode()               (required)
@@ -826,6 +829,9 @@ Get an order builder instance using the WebPay::deliverOrder entrypoint, then pr
 Finish by selecting the correct ordertype and perform the request:
 ->deliverInvoiceOrder() // deliverPaymentPlanOrder() or deliverCardOrder()
   ->doRequest()
+
+...
+```
 
 The final doRequest() returns either a DeliverOrderResult or a ConfirmTransactionResponse.
 
@@ -1172,6 +1178,7 @@ The WebPayAdmin::creditOrderRows entrypoint method is used to credit rows in an 
 Get an order builder instance using the WebPayAdmin::creditOrderRows entrypoint, then provide more information about the transaction and send the request using the creditOrderRowsBuilder methods:
 
 ```php
+
 <?php
 ...
 ->setInvoiceId()                 (invoice only, required)
@@ -1249,7 +1256,7 @@ Finish by selecting the correct ordertype and perform the request:
 ...
 ```
 
-The final doRequest() returns an AddOrderRowsResponse
+The final doRequest() returns an AddOrderRowsResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AddOrderRowsBuilder.html" target="_blank">AddOrderRowsBuilder</a> method details.
 
@@ -1261,12 +1268,22 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminS
 ### 7.6 WebPayAdmin::updateOrderRows() <a name="i76"></a>
 The `WebPayAdmin::updateOrderRows()` method is used to update individual order rows in non-delivered invoice and payment plan orders.
 
+For Invoice and Payment Plan orders, the order row status of the order is updated to reflect the added order rows. If the updated rows order total exceeds the original order total, an error is returned by the service. 
+
+Use setCountryCode() to specify the country code matching the original create order request.
+
+Use updateOrderRow() or updateOrderRows() to specify the order row(s) to update in the order. The supplied order row numbers must match order rows from the original createOrder request. 
+
+Then use either updateInvoiceOrderRows() or updatePaymentPlanOrderRows(), which ever matches the payment method used in the original order request.
+
+The final doRequest() will send the updateOrderRows request to Svea, and the resulting response code specifies the outcome of the request. 
+
 #### 7.6.1 Usage
 Update order rows in a non-delivered invoice or payment plan order. (Card and Direct Bank orders are not supported.)
 
 Provide information about the updated order rows and send the request using updateOrderRowsBuilder methods:
 
-```
+```php
 <?php
 ...
 ->setOrderId()
@@ -1280,7 +1297,7 @@ Finish by selecting the correct ordertype and perform the request:
 ...
 ```
 
-The final doRequest() returns an UpdateOrderRowsResponse
+The final doRequest() returns an UpdateOrderRowsResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.UpdateOrderRowsBuilder.html" target="_blank">UpdateOrderRowsBuilder</a> method details.
 
@@ -1295,7 +1312,8 @@ The WebPayAdmin::deliverOrderRows entrypoint method is used to deliver individua
 
 Get an order builder instance using the WebPayAdmin::deliverOrderRows entrypoint, then provide more information about the transaction and send the request using the deliverOrderRowsBuilder methods:
 
-```<?php
+```php
+<?php
 ... 
 ->setOrderId()           (invoice, card only, required)
 ->setCountryCode()       (invoice only, required)
@@ -1310,7 +1328,7 @@ Finish by selecting the correct ordertype and perform the request:
 ... 
 ```
 
-The final doRequest() returns a DeliverOrderRowsResponse or ConfirmTransactionResponse
+The final doRequest() returns a DeliverOrderRowsResponse or ConfirmTransactionResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.DeliverOrderRowsBuilder.html" target="_blank">CreditOrderRowsBuilder</a> method details.
 
