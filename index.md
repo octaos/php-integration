@@ -1080,14 +1080,14 @@ $response = $request->doRequest();      // send request and receive either WebSe
 ```
 
 ### 7.2 WebPayAdmin::queryOrder() <a name="i72"></a>
-The WebPayAdmin::queryOrder method is used get information about an order, including Svea status et al.
+The WebPayAdmin::queryOrder method is used to get information about an order, including Svea status et al.
 
 #### 7.2.1 Usage and return types
 Query information about an order. Supports all order payment methods.
 
 Provide more information about the transaction and send the request using QueryOrderBuilder methods:
 
-```
+```php
 <?php
 ...
 ->setOrderId()
@@ -1116,6 +1116,9 @@ The WebPayAdmin::cancelOrderRows entrypoint method is used to cancel rows in an 
 
 Get an order builder instance using the WebPayAdmin::cancelOrderRows entrypoint, then provide more information about the transaction and send the request using the cancelOrderRowsBuilder methods:
 
+```php
+<?php
+...
 ->setOrderId()           (required)
 ->setCountryCode()       (required)
 ->setRowToCancel()       (required, index of one of the original order row you wish to cancel)
@@ -1126,6 +1129,8 @@ Get an order builder instance using the WebPayAdmin::cancelOrderRows entrypoint,
 Finish by selecting the correct ordertype and perform the request:
 ->cancelInvoiceOrderRows() // or cancelPaymentPlanOrderRows() or cancelCardOrderRows()
   ->doRequest()
+...
+```
 
 The final doRequest() returns either a CancelOrderRowsResponse or a LowerTransactionResponse.
 
@@ -1166,6 +1171,9 @@ The WebPayAdmin::creditOrderRows entrypoint method is used to credit rows in an 
 
 Get an order builder instance using the WebPayAdmin::creditOrderRows entrypoint, then provide more information about the transaction and send the request using the creditOrderRowsBuilder methods:
 
+```php
+<?php
+...
 ->setInvoiceId()                 (invoice only, required)
 ->setInvoiceDistributionType()   (invoice only, required)
 ->setOrderId()                   (card and direct bank only, required)
@@ -1180,7 +1188,10 @@ Get an order builder instance using the WebPayAdmin::creditOrderRows entrypoint,
 Finish by instantiating the request type and perform the request:
 ->creditInvoiceOrderRows() // creditCardOrderRows() or creditDirectBankOrderRows()
   ->doRequest()
- 
+<?php
+... 
+```
+
 The final doRequest() returns either a CreditOrderRowsResponse or a CreditTransactionResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.CreditOrderRowsBuilder.html" target="_blank">CreditOrderRowsBuilder</a> method details.
@@ -1224,7 +1235,7 @@ Add order rows to an order. Supports Invoice and Payment Plan orders. (Card and 
 
 Provide information about the new order rows and send the request using addOrderRowsBuilder methods:
 
-```
+```php
 <?php
 ...
 ->setOrderId()
@@ -1284,6 +1295,8 @@ The WebPayAdmin::deliverOrderRows entrypoint method is used to deliver individua
 
 Get an order builder instance using the WebPayAdmin::deliverOrderRows entrypoint, then provide more information about the transaction and send the request using the deliverOrderRowsBuilder methods:
 
+```<?php
+... 
 ->setOrderId()           (invoice, card only, required)
 ->setCountryCode()       (invoice only, required)
 ->setRowToDeliver()      (required, index of one of the original order row you wish to cancel)
@@ -1294,6 +1307,8 @@ Get an order builder instance using the WebPayAdmin::deliverOrderRows entrypoint
 Finish by selecting the correct ordertype and perform the request:
 ->deliverInvoiceOrderRows() // or ->deliverCardOrderRows()
   ->doRequest()
+... 
+```
 
 The final doRequest() returns a DeliverOrderRowsResponse or ConfirmTransactionResponse
 
