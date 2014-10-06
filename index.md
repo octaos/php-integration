@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.1
+## Version 2.2.2
 
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
@@ -1028,27 +1028,24 @@ The returned instance of PaymentPlanPricePerMonth contains an array "values", wh
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/WebPay.html#method_paymentPlanPricePerMonth" target="_blank">WebPay::paymentPlanPricePerMonth()</a> and the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.PaymentPlanPricePerMonth.html" target="_blank">PaymentPlanPricePerMonth</a> class.
 
 ### 6.6 WebPay::listPaymentMethods() <a name="i66"></a>
-The WebPayAdmin::listPaymentMethods method is used to fetch all available paymentmethods for a given ConfigurationProvider and country.
+The WebPay::listPaymentMethods method is used to fetch all available paymentmethods configured for a given country.
 
 #### 6.6.1
 Use the WebPay::listPaymentMethods() entrypoint to get an instance of ListPaymentMethods. Then provide more information about the transaction and
 send the request using ListPaymentMethod methods.
 
-Following the `->doRequest` call you receive an instance of ListPaymentMethodsResponse:
-
 ```php
 <?php
 ...
-$fooArray = WebPay::listPaymentMethods( $config )     // optional, if no $config given, will use defaults from SveaConfig
-                  ->setContryCode("SE")               // optional, if no country given, will use default country "SE"
-                  ->doRequest();
+   $methods = WebPay::listPaymentMethods( $config )
+      ->setCountryCode("SE")      // required
+      ->doRequest()
+   ;
 ...
 ```
+Following the ->doRequest call you receive an instance of ListPaymentMethodsResponse.
 
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/WebPay.html#method_listPaymentMethods" target="_blank">WebPay::listPaymentMethods()</a> and <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.ListPaymentMethodsResponse.html" target="_blank">ListPaymentMethodsResponse</a> classes.
-
-#### 6.6.2
-*example to come later*
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
@@ -1067,6 +1064,33 @@ The WebPayAdmin class methods are used to administrate orders after they have be
 The WebPayAdmin::cancelOrder method is used to cancel an order with Svea, that has not yet been delivered (invoice, payment plan) or confirmed (card).
 
 Direct bank orders are not supported, see WebPayAdmin::creditOrder.
+
+CancelOrderBuilder is the class used to cancel an order with Svea, that has
+not yet been delivered (invoice, payment plan) or been confirmed (card).
+
+Supports Invoice, Payment Plan and Card orders. For Direct Bank orders, @see
+CreditOrderBuilder instead.
+
+Use setOrderId() to specify the Svea order id, this is the order id returned 
+with the original create order request response.
+
+Use setCountryCode() to specify the country code matching the original create
+order request.
+
+Use either cancelInvoiceOrder(), cancelPaymentPlanOrder or cancelCardOrder,
+which ever matches the payment method used in the original order request.
+ 
+The final doRequest() will send the cancelOrder request to Svea, and the 
+resulting response object contents holds outcome of the request. 
+    
+   $response = WebPay::cancelOrder($config)
+       ->setCountryCode("SE")          // Required. Use same country code as in createOrder request.
+       ->setOrderId($orderId)          // Required. Use SveaOrderId received with createOrder response
+       ->cancelInvoiceOrder()          // Use the method corresponding to the original createOrder payment method.
+       //->cancelPaymentPlanOrder()     
+       //->cancelCardOrder()           
+            ->doRequest()
+   ; 
 
 #### 7.1.1 Usage
 Cancel an undelivered/unconfirmed order. Supports Invoice, PaymentPlan and Card orders. (For Direct Bank orders, see CreditOrder instead.)
