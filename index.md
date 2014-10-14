@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.2
+## Version 2.2.3
 
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
@@ -805,35 +805,48 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Create
 
 ### 6.2 WebPay::deliverOrder() <a name="i62"></a>
 <!-- WebPay::deliverOrder() docblock below, replace @see with apidoc links -->
-Use the WebPay::deliverOrder() entrypoint when you deliver an order. Supports Invoice, Payment Plan and Card orders. (Direct Bank orders are not supported.)
 
-The deliver order request should generally be sent to Svea once the ordered items have been sent out, or otherwise delivered, to the customer. 
+Use the WebPay::deliverOrder() entrypoint when you deliver an order to the customer. 
+Supports Invoice, Payment Plan and Card orders. (Direct Bank orders are not supported.)
 
-For invoice and partpayment orders, the deliver order request triggers the invoice being sent out to the customer by Svea. (This assumes that your account has auto-approval of invoices turned on, please contact Svea if unsure). 
+The deliver order request should generally be sent to Svea once the ordered 
+items have been sent out, or otherwise delivered, to the customer. 
 
-For card orders, the deliver order request confirms the card transaction, which in turn allows nightly batch processing of the transaction by Svea. (Delivering card orders is only needed if your account has auto-confirm turned off, please contact Svea if unsure.)
+For invoice and partpayment orders, the deliver order request triggers the 
+invoice being sent out to the customer by Svea. (This assumes that your account
+has auto-approval of invoices turned on, please contact Svea if unsure). 
 
-Get an order builder instance using the WebPay::deliverOrder entrypoint, then provide more information about the transaction and send the request using the DeliverOrderBuilder methods:
+For card orders, the deliver order request confirms the card transaction, 
+which in turn allows nightly batch processing of the transaction by Svea.  
+(Delivering card orders is only needed if your account has auto-confirm
+turned off, please contact Svea if unsure.)
+
+To deliver an invoice, partpayment or card order in full, you do not need to 
+specifying order rows. To partially deliver an order, use WebPayAdmin::deliverOrderRows().
+ 
+Get an order builder instance using the WebPay::deliverOrder entrypoint, then
+provide more information about the transaction using DeliverOrderBuilder methods. 
 
 ```php
 <?php
 ...
-->setOrderId()                   (invoice or payment plan, required)
-->setTransactionId()             (card only, required -- you can also use setOrderId)
-->setCountryCode()               (required)
-->setInvoiceDistributionType()   (invoice only, required)
-->setNumberOfCreditDays()        (invoice only, optional)
-->setCaptureDate()               (card only, optional)
-->addOrderRow()                  (deprecated, optional -- use WebPayAdmin::deliverOrderRows instead)
-->setCreditInvoice()             (deprecated, optional -- use WebPayAdmin::creditOrderRows instead)
+     $request = WebPay::deliverOrder($config)
+         ->setOrderId()                  // invoice or payment plan only, required
+         ->setTransactionId()            // card only, optional -- you can also use setOrderId
+         ->setCountryCode()              // required
+         ->setInvoiceDistributionType()  // invoice only, required
+         ->setNumberOfCreditDays()       // invoice only, optional
+         ->setCaptureDate()              // card only, optional
+         ->addOrderRow()                 // deprecated, optional -- use WebPayAdmin::deliverOrderRows instead
+         ->setCreditInvoice()            // deprecated, optional -- use WebPayAdmin::creditOrderRows instead
+         ->deliverInvoiceOrder()         // select request class, use same order type as in createOrder request
+             ->doRequest()               // and perform the request, returns DeliverOrderResult 
 
-Finish by selecting the correct ordertype and perform the request:
-->deliverInvoiceOrder() // deliverPaymentPlanOrder() or deliverCardOrder()
-  ->doRequest()
+         //->deliverPaymentPlanOrder()->doRequest()  // returns DeliverOrderResult 
+         //->deliverCardOrder()->doRequest()         // returns ConfirmTransactionResponse 
+     ;
 ...
 ```
-
-The final doRequest() returns either a DeliverOrderResult or a ConfirmTransactionResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.DeliverOrderBuilder.html" target="_blank">DeliverOrderBuilder</a> class for methods used to build the order object and select the order type to deliver.
 
