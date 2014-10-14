@@ -1187,7 +1187,8 @@ $order->addOrderRow($orderRow)->useInvoicePayment()->doRequest;
 
 Querying the above order will result in a response having order rows with the following name and description:
 
-```php <?php
+```php 
+<?php
 ...
 $queryBuilder = WebPayAdmin::queryOrder($config)
     ->setOrderId($invoiceOrderIdToQuery)
@@ -1195,16 +1196,17 @@ $queryBuilder = WebPayAdmin::queryOrder($config)
 ;
 $queryInvoiceOrderResponse = $queryBuilder->queryInvoiceOrder()->doRequest();
 
-$queryInvoiceOrderResponse->name;          // null
-$queryInvoiceOrderResponse->description;   // "orderrad 1: beskrivning 1"
+$queryInvoiceOrderResponse->name;          // contains null
+$queryInvoiceOrderResponse->description;   // contains "orderrad 1: beskrivning 1"
 ```
 
 whereas a card or direct bank order specified in the same way will have
 
 ```php
+<?php
 ...
-$queryCardOrderResponse->name;             // "orderrad 1"
-$queryCardOrderResponse->description;      // "beskrivning 1"
+$queryCardOrderResponse->name;             // contains "orderrad 1"
+$queryCardOrderResponse->description;      // contains "beskrivning 1"
 ```
 
 As you can see, the order row name field is present but always null in the GetOrdersResponse class. This is correct and due to reuse of the existing NumberOrderRow class for the response. The QueryTransactionResponse class has the original name and description in the respective fields.
