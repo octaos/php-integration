@@ -565,61 +565,64 @@ See the <a href="http://sveawebpay.github.io/php-integration/api/classes/WebPayI
 ### 5.1 Specifying item price <a name="i51"></a>
 Specify item price using precisely two of these methods in order to specify the item price and tax rate: `setAmountExVat()`, `setAmountIncVat()` and `setVatPercent()`.
 
-We recommend specifying price using `setAmountExVat()` and `setVatPercentage()`. If not, make sure not retain as much precision as possible, i.e. use no premature rounding (87.4875 is a "better" PriceIncVat than 87.49).
-
 If you use `setAmountIncVat()`, note that this may introduce a cumulative rounding error when ordering large quantities of an item, as the package bases the total order sum on a calculated price excluding vat.
 
 ### 5.2 WebPayItem::orderRow() <a name="i52"></a>
-Use this to add all kinds of products and other items. An order is required to have at least one order row.
+<!-- WebPayItem::orderRow() docbloc below, replace @see with apidoc links -->
+The WebPayItem::orderRow() entrypoint method is used to specify order items like products and services. 
+It is required to have a minimum of one order row in an order.
 
-#### 5.2.1 Usage
+Specify the item price using precisely two of these methods in order to specify the item price and tax rate: 
+setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setAmountExVat() and setVatPercentage().
+
+If you use setAmountIncVat(), note that this may introduce a cumulative rounding error when ordering large
+quantities of an item, as the package bases the total order sum on a calculated price ex. vat.
+
 ```php
 <?php
-...
-$order->
-    addOrderRow(
-        WebPayItem::orderRow()
-            ->setAmountExVat(100.00)                // recommended to specify price using AmountExVat & VatPercent
-            ->setVatPercent(25)                     // recommended to specify price using AmountExVat & VatPercent
-            ->setAmountIncVat(125.00)               // optional, need to use two out of three of the price specification methods
-            ->setQuantity(2)                        // required
-            ->setUnit("st")                         // optional
-            ->setName('Prod')                       // optional, invoice and payment plan orders will merge "name" into "description" 
-            ->setDescription("Specification")       // optional, invoice and payment plan orders will merge "name" into "description" 
-            ->setArticleNumber("1")                 // optional
-            ->setDiscountPercent(0)                 // optional
-    )
-;
+... 
+     $orderrow = WebPayItem::orderRow()
+         ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
+         ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
+         ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
+         ->setQuantity(2)                // required
+         ->setUnit("pcs.")               // optional
+         ->setName('name')               // optional, invoice & payment plan orders will merge "name" with "description" 
+         ->setDescription("description") // optional, invoice & payment plan orders will merge "name" with "description" 
+         ->setArticleNumber("1")         // optional
+         ->setDiscountPercent(0)         // optional
+     );
 ...
 ```
 
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.OrderRow.html" target="_blank">OrderRow</a> class methods for details on how to specify the item, including all *required* methods.
+See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.OrderRow.html" target="_blank">OrderRow</a> class methods for details.
 
 ### 5.3 WebPayItem::shippingFee() <a name="i53"></a>
-Use this class to add shipping fee to the order.
+<!-- WebPayItem::shippingFee() docbloc below, replace @see with apidoc links -->
 
-#### 5.3.1 Usage
+The WebPayItem::shippingFee() entrypoint method is used to specify order shipping fee rows.
+It is not required to have a shipping fee row in an order.
+
+Specify the item price using precisely two of these methods in order to specify the item price and tax rate: 
+setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setAmountExVat() and setVatPercentage().
 
 ```php
 <?php
 ...
-$order->
-    addFee(
-        WebPayItem::shippingFee()
-            ->setShippingId('33')                   // optional
-            ->setName('shipping')                   // optional
-            ->setDescription("Specification")       // optional
-            ->setAmountExVat(50)                    // recommended to specify price using AmountExVat & VatPercent
-            ->setVatPercent(25)                     // recommended to specify price using AmountExVat & VatPercent
-            ->setAmountIncVat(62.50)                // optional, need to use two out of three of the price specification methods
-            ->setUnit("st")                         // optional
-            ->setDiscountPercent(0)                 // optional
-    )
-;
+     $shippingFee = WebPayItem::shippingFee()
+         ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
+         ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
+         ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
+         ->setUnit("pcs.")               // optional
+         ->setName('name')               // optional
+         ->setDescription("description") // optional
+         ->setShippingId('33')           // optional
+         ->setDiscountPercent(0)         // optional
+     );
 ...
 ```
 
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.ShippingFee.html" target="_blank">ShippingFee</a> class methods for details on how to specify the item, including all *required* methods.
+See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.ShippingFee.html" target="_blank">ShippingFee</a> class methods for details.
 
 ### 5.4 WebPayItem::invoiceFee() <a name="i54"></a>
 Use this class to add fees associated with a payment method (i.e. invoice fee) to the order.
