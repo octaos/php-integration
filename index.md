@@ -1120,26 +1120,30 @@ $response = $request->doRequest();      // send request and receive either WebSe
 ```
 
 ### 7.2 WebPayAdmin::queryOrder() <a name="i72"></a>
-The WebPayAdmin::queryOrder method is used to get information about an order, including Svea status et al.
+The WebPayAdmin::queryOrder entrypoint method is used to get information about an order.
 
-#### 7.2.1 Usage and return types
-Query information about an order. Supports all order payment methods.
+Note that for invoice and payment plan orders, the order rows name and description is merged
+into the description field in the query response.
 
-Provide more information about the transaction and send the request using QueryOrderBuilder methods:
-
+Get an query builder instance using the WebPayAdmin::queryOrder entrypoint, then provide 
+more information about the order and send the request using the queryOrderBuilder methods:  
 ```php
 <?php
 ...
-->setOrderId()
-->setCountryCode()
-
-Then select the correct ordertype and perform the request:
-->queryInvoiceOrder() | queryPaymentPlanOrder() | queryCardOrder() | queryDirectBankOrder()
-  ->doRequest()
+    $request = WebPay::queryOrder($config)
+         ->setOrderId()          // required
+         ->setCountryCode()      // required      
+         ->queryInvoiceOrder()   // select ordertype and
+             ->doRequest()       // perform the request, returning a GetOrdersResponse
+         
+         //->queryPaymentPlanOrder()->doRequest() // returns GetOrdersResponse
+         //->queryCardOrder()->doRequest()        // returns QueryTransactionResponse
+         //->queryDirectBankOrder()->doRequest()  // returns QueryTransactionResponse
+    ;
 ...
 ```
 
-The final doRequest() returns either a GetOrdersResponse or an QueryTransactionResponse
+The final doRequest() returns either a GetOrdersResponse or an QueryTransactionResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.QueryOrderBuilder.html" target="_blank">QueryOrderBuilder</a> method details.
 
@@ -1147,8 +1151,61 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminS
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.QueryTransactionResponse.html" target="_blank">QueryTransactionResponse</a> for card and direct bank orders response.
 
+#### 7.2.1 Usage
+QueryOrderBuilder is the class used to query information about an order from Svea.
+
+Use setOrderId() to specify the Svea order id, this is the order id returned 
+with the original create order request response as either sveaOrderId or transactionId.
+
+Use setCountryCode() to specify the country code matching the original create
+order request.
+
+Then get a request object using either queryInvoiceOrder(), queryPaymentPlanOrder(), 
+queryCardOrder(), or queryDirectBankOrder(), which ever matches the payment method 
+used in the original order request, and send the query request to svea using the 
+request object doRequest() method.
+
+The final doRequest() will send the queryOrder request to Svea, and the 
+resulting response code specifies the outcome of the request. 
+
 #### 7.2.2 Example
-*example to come later*
+
+Example of an order with an order row specified using setName() and setDescription():
+
+```php
+...
+$orderRow = WebPayItem::orderRow()
+    ...
+    ->setName("orderrow 1")                 // optional
+    ->setDescription("description 1")       // optional
+;   
+$order->addOrderRow($orderRow)->useInvoicePayment()->doRequest;
+...
+```
+
+Querying the above order will result in a response having order rows with the following name and description:
+
+```php
+...
+$queryBuilder = WebPayAdmin::queryOrder($config)
+    ->setOrderId($invoiceOrderIdToQuery)
+    ->setCountryCode($country)
+;
+$queryInvoiceOrderResponse = $queryBuilder->queryInvoiceOrder()->doRequest();
+
+$queryInvoiceOrderResponse->name;          // null
+$queryInvoiceOrderResponse->description;   // "orderrad 1: beskrivning 1"
+```
+
+whereas a card or direct bank order specified in the same way will have
+
+```php
+...
+$queryCardOrderResponse->name;             // "orderrad 1"
+$queryCardOrderResponse->description;      // "beskrivning 1"
+```
+
+As you can see, the order row name field is present but always null in the GetOrdersResponse class. This is correct and due to reuse of the existing NumberOrderRow class for the response. The QueryTransactionResponse class has the original name and description in the respective fields.
 
 ### 7.3 WebPayAdmin::cancelOrderRows() <a name="i73"></a>
 <!-- WebPayAdmin::cancelOrderRows() docblock below, replace @see with apidoc links -->
