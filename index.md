@@ -1127,6 +1127,7 @@ into the description field in the query response.
 
 Get an query builder instance using the WebPayAdmin::queryOrder entrypoint, then provide 
 more information about the order and send the request using the queryOrderBuilder methods:  
+
 ```php
 <?php
 ...
