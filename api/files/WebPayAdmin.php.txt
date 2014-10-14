@@ -44,19 +44,24 @@ The Svea WebPay PHP integration package is developed and tested using NetBeans I
 class WebPayAdmin {
 
     /**
-     * Cancel an undelivered/unconfirmed order. Supports Invoice, PaymentPlan
-     * and Card orders. (For Direct Bank orders, see CreditOrder instead.)
+     * The WebPayAdmin::queryOrder() entrypoint method is used to cancel an order with Svea, 
+     * that has not yet been delivered (invoice, payment plan) or been confirmed (card).
+     * 
+     * Supports Invoice, Payment Plan and Card orders. For Direct Bank orders, use
+     * WebPayAdmin::creditOrder() instead.
      *
-     * Use the following methods to set the order attributes needed in the request:
-     * ->setOrderId(sveaOrderId or transactionId from createOrder response)
-     * ->setCountryCode()
-     *
-     * Then select the correct ordertype and perform the request:
-     * ->cancelInvoiceOrder() | cancelPaymentPlanOrder() | cancelCardOrder()
-     *   ->doRequest
-     *
+     *      $request = WebPay::cancelOrder($config)
+     *          ->setOrderId($orderId)          // required, use SveaOrderId recieved with createOrder response
+     *          ->setCountryCode("SE")          // required, use same country code as in createOrder request
+     *          ->cancelInvoiceOrder()          // select request class, use same order type as in createOrder request
+     *              ->doRequest()               // and perform the request, returns CloseOrderResult 
+     * 
+     *          //->cancelPaymentPlanOrder()->doRequest()   // returns CloseOrderResult 
+     *          //->cancelCardOrder()->doRequest()          // returns AnnulTransactionResponse           
+     *      ; 
+     *     
      * The final doRequest() returns either a CloseOrderResult or an AnnulTransactionResponse
-     *
+     * 
      * @see \Svea\CancelOrderBuilder \Svea\CancelOrderBuilder
      * @see \Svea\WebService\CloseOrderResult Svea\WebService\CloseOrderResult
      * @see \Svea\HostedService\AnnulTransactionResponse \Svea\HostedService\AnnulTransactionResponse
@@ -82,8 +87,8 @@ class WebPayAdmin {
      *      $request = WebPay::queryOrder($config)
      *          ->setOrderId()          // required
      *          ->setCountryCode()      // required      
-     *          ->queryInvoiceOrder()   // select ordertype and
-     *              ->doRequest()       // perform the request, returning a GetOrdersResponse
+     *          ->queryInvoiceOrder()   // select request class and
+     *              ->doRequest()       // perform the request, returns GetOrdersResponse
      *          
      *          //->queryPaymentPlanOrder()->doRequest() // returns GetOrdersResponse
      *          //->queryCardOrder()->doRequest()        // returns QueryTransactionResponse

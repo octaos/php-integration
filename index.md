@@ -584,8 +584,8 @@ $order->
             ->setAmountIncVat(125.00)               // optional, need to use two out of three of the price specification methods
             ->setQuantity(2)                        // required
             ->setUnit("st")                         // optional
-            ->setName('Prod')                       // optional
-            ->setDescription("Specification")       // optional
+            ->setName('Prod')                       // optional, invoice and payment plan orders will merge "name" into "description" 
+            ->setDescription("Specification")       // optional, invoice and payment plan orders will merge "name" into "description" 
             ->setArticleNumber("1")                 // optional
             ->setDiscountPercent(0)                 // optional
     )

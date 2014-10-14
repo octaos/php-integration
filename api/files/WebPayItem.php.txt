@@ -13,8 +13,27 @@ include_once SVEA_REQUEST_DIR . "/Includes.php";
 class WebPayItem {
 
     /**
-     * Use this to add all kinds of products and other items. An order is required to have at least one order row.
-     *
+     * Use the OrderRow class for all kinds of products and other items. It is required to have a minimum of one order row.
+     * 
+     * Specify the price using precisely two of these methods in order to specify the item price and tax rate: 
+     * setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setAmountExVat() and setVatPercentage().
+     * 
+     * If you use setAmountIncVat(), note that this may introduce a cumulative rounding error when ordering large
+     * quantities of an item, as the package bases the total order sum on a calculated price ex. vat.
+     *  
+     *      $order->addOrderRow(
+     *         WebPayItem::orderRow()
+     *            ->setAmountExVat(100.00)          // optional, need to use two out of three of the price specification methods, recommended
+     *            ->setVatPercent(25)               // optional, need to use two out of three of the price specification methods, recommended
+     *            ->setAmountIncVat(125.00)         // optional, need to use two out of three of the price specification methods
+     *            ->setQuantity(2)                  // required
+     *            ->setUnit("st")                   // optional
+     *            ->setName('Prod')                 // optional, invoice and payment plan orders will merge "name" into "description" 
+     *            ->setDescription("Specification") // optional, invoice and payment plan orders will merge "name" into "description" 
+     *            ->setArticleNumber("1")           // optional
+     *            ->setDiscountPercent(0)           // optional
+     *      );
+     * 
      * @return \Svea\OrderRow
      */
      public static function orderRow() {
@@ -23,7 +42,6 @@ class WebPayItem {
 
     /**
      * Use this only when supplying NumberedOrderRow items for the various WebPayAdmin order row administration functions.
-     * 
      * @return \Svea\NumberedOrderRow
      */
      public static function numberedOrderRow() {
@@ -31,8 +49,24 @@ class WebPayItem {
     }
     
     
-    /**
-     * Sets shipping fee
+    /*
+     * Use this class to add shipping to the order.
+     * 
+     * Specify the price using precisely two of these methods in order to specify the item price and tax rate: 
+     * setAmountExVat(), setAmountIncVat() and setVatPercent().
+     * 
+     *      $order->addFee(
+     *          WebPayItem::shippingFee()
+     *              ->setShippingId('33')                   // optional
+     *              ->setName('shipping')                   // optional
+     *              ->setDescription("Specification")       // optional
+     *              ->setAmountExVat(50)                    // recommended to specify price using AmountExVat & VatPercent
+     *              ->setVatPercent(25)                     // recommended to specify price using AmountExVat & VatPercent
+     *              ->setAmountIncVat(62.50)                // optional, need to use two out of three of the price specification methods
+     *              ->setUnit("st")                         // optional
+     *              ->setDiscountPercent(0)                 // optional
+     *      );
+     * 
      * @return \Svea\ShippingFee
      */
     public static function shippingFee() {
