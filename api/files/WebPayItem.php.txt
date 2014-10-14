@@ -13,25 +13,25 @@ include_once SVEA_REQUEST_DIR . "/Includes.php";
 class WebPayItem {
 
     /**
-     * Use the OrderRow class for all kinds of products and other items. It is required to have a minimum of one order row.
+     * The WebPayItem::orderRow() entrypoint method is used to specify order items like products and services. 
+     * It is required to have a minimum of one order row in an order.
      * 
-     * Specify the price using precisely two of these methods in order to specify the item price and tax rate: 
+     * Specify the item price using precisely two of these methods in order to specify the item price and tax rate: 
      * setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setAmountExVat() and setVatPercentage().
      * 
      * If you use setAmountIncVat(), note that this may introduce a cumulative rounding error when ordering large
      * quantities of an item, as the package bases the total order sum on a calculated price ex. vat.
      *  
-     *      $order->addOrderRow(
-     *         WebPayItem::orderRow()
-     *            ->setAmountExVat(100.00)          // optional, need to use two out of three of the price specification methods, recommended
-     *            ->setVatPercent(25)               // optional, need to use two out of three of the price specification methods, recommended
-     *            ->setAmountIncVat(125.00)         // optional, need to use two out of three of the price specification methods
-     *            ->setQuantity(2)                  // required
-     *            ->setUnit("st")                   // optional
-     *            ->setName('Prod')                 // optional, invoice and payment plan orders will merge "name" into "description" 
-     *            ->setDescription("Specification") // optional, invoice and payment plan orders will merge "name" into "description" 
-     *            ->setArticleNumber("1")           // optional
-     *            ->setDiscountPercent(0)           // optional
+     *      $orderrow = WebPayItem::orderRow()
+     *          ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
+     *          ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
+     *          ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
+     *          ->setQuantity(2)                // required
+     *          ->setUnit("pcs.")               // optional
+     *          ->setName('name')               // optional, invoice & payment plan orders will merge "name" with "description" 
+     *          ->setDescription("description") // optional, invoice & payment plan orders will merge "name" with "description" 
+     *          ->setArticleNumber("1")         // optional
+     *          ->setDiscountPercent(0)         // optional
      *      );
      * 
      * @return \Svea\OrderRow
@@ -47,24 +47,23 @@ class WebPayItem {
      public static function numberedOrderRow() {
          return new Svea\NumberedOrderRow();
     }
-    
-    
+       
     /*
-     * Use this class to add shipping to the order.
+     * The WebPayItem::shippingFee() entrypoint method is used to specify order shipping fee rows.
+     * It is not required to have a shipping fee row in an order.
      * 
-     * Specify the price using precisely two of these methods in order to specify the item price and tax rate: 
-     * setAmountExVat(), setAmountIncVat() and setVatPercent().
+     * Specify the item price using precisely two of these methods in order to specify the item price and tax rate: 
+     * setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setAmountExVat() and setVatPercentage().
      * 
-     *      $order->addFee(
-     *          WebPayItem::shippingFee()
-     *              ->setShippingId('33')                   // optional
-     *              ->setName('shipping')                   // optional
-     *              ->setDescription("Specification")       // optional
-     *              ->setAmountExVat(50)                    // recommended to specify price using AmountExVat & VatPercent
-     *              ->setVatPercent(25)                     // recommended to specify price using AmountExVat & VatPercent
-     *              ->setAmountIncVat(62.50)                // optional, need to use two out of three of the price specification methods
-     *              ->setUnit("st")                         // optional
-     *              ->setDiscountPercent(0)                 // optional
+     *      $shippingFee = WebPayItem::shippingFee()
+     *          ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
+     *          ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
+     *          ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
+     *          ->setUnit("pcs.")               // optional
+     *          ->setName('name')               // optional
+     *          ->setDescription("description") // optional
+     *          ->setShippingId('33')           // optional
+     *          ->setDiscountPercent(0)         // optional
      *      );
      * 
      * @return \Svea\ShippingFee
@@ -81,7 +80,6 @@ class WebPayItem {
     }
 
     /**
-     * 
      * @return \Svea\FixedDiscount
      */
     public static function fixedDiscount() {
@@ -89,7 +87,6 @@ class WebPayItem {
     }
 
     /**
-     * 
      * @return \Svea\RelativeDiscount
      */
     public static function relativeDiscount() {
@@ -97,7 +94,6 @@ class WebPayItem {
     }
 
     /**
-     * 
      * @return \Svea\IndividualCustomer
      */
     public static function individualCustomer() {
@@ -105,7 +101,6 @@ class WebPayItem {
     }
 
     /**
-     * 
      * @return \Svea\CompanyCustomer
      */
     public static function companyCustomer() {

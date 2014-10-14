@@ -78,9 +78,6 @@ class ShippingFee {
      * 
      * Order row item price including tax, expressed as a float value. 
      * 
-     * We recommend specifying AmountExVat and VatPercentage. If not, make sure not retain as much precision as possible, i.e. use no 
-     * premature rounding (87.4875 is a "better" PriceIncVat than 87.49) as the package processes the price before sending the request to Svea. 
-     * 
      * If you specify AmountIncVat, note that this may introduce a cumulative rounding error when ordering large
      * quantities of an item, as the package bases the total order sum on a calculated price ex. vat. 
      * 
