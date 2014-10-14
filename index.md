@@ -625,32 +625,30 @@ setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setA
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.ShippingFee.html" target="_blank">ShippingFee</a> class methods for details.
 
 ### 5.4 WebPayItem::invoiceFee() <a name="i54"></a>
-Use this class to add fees associated with a payment method (i.e. invoice fee) to the order.
+<!-- WebPayItem::invoiceFee() docbloc below, replace @see with apidoc links -->
 
-#### 5.4.1 Usage
+The WebPayItem::invoiceFee() entrypoint method is used to specify fees associated with a payment method (i.e. invoice fee).
+It is not required to have an invoice fee row in an order.
 
-Specify the price using precisely two of these methods in order to specify the item price and tax rate:
-`setAmountExVat()`, `setAmountIncVat()` and `setVatPercent()`. We recommend specifying price using `setAmountExVat()` and `setVatPercentage()`.
+Specify the item price using precisely two of these methods in order to specify the item price and tax rate: 
+setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setAmountExVat() and setVatPercentage().
 
 ```php
 <?php
 ...
-$order->
-    addFee(
-        WebPayItem::invoiceFee()
-            ->setName('Svea fee')                   // optional
-            ->setDescription("Fee for invoice")     // optional
-            ->setAmountExVat(50)                    // recommended to specify price using AmountExVat & VatPercent
-            ->setVatPercent(25)                     // recommended to specify price using AmountExVat & VatPercent
-            ->setAmountIncVat(62.50)                // optional, need to use two out of three of the price specification methods
-            ->setUnit("st")                         // optional
-            ->setDiscountPercent(0)                 // optional
-    )
-;
+     $invoiceFee = WebPayItem::invoiceFee()
+         ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
+         ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
+         ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
+         ->setUnit("pcs.")               // optional
+         ->setName('name')               // optional
+         ->setDescription("description") // optional
+         ->setDiscountPercent(0)         // optional
+     );
 ...
 ```
 
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.InvoiceFee.html" target="_blank">InvoiceFee</a> class methods for details on how to specify the item, including all *required* methods.
+See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.InvoiceFee.html" target="_blank">InvoiceFee</a> class methods for details.
 
 ### 5.5 WebPayItem::fixedDiscount() <a name="i55"></a>
 Use this method when the discount or coupon is expressed as a percentage of the total product amount.
