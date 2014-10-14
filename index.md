@@ -789,7 +789,7 @@ See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Co
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
 ## 6. WebPay entrypoint method reference <a name="i6"></a>
-The WebPay class methods contains the functions needed to create orders and perform payment requests using Svea payment methods. It contains entrypoint methods to define order contents, send order requests, as well as various support methods needed to do this.
+The WebPay class methods contains the functions needed to create orders and perform payment requests using Svea payment methods. It contains entrypoint methods used to define order contents, send order requests, as well as various support methods needed to do this.
 
 * [6.1 WebPay::createOrder()](http://sveawebpay.github.io/php-integration#i61)
 * [6.2 WebPay::deliverOrder()](http://sveawebpay.github.io/php-integration#i62)
@@ -799,9 +799,43 @@ The WebPay class methods contains the functions needed to create orders and perf
 * [6.6 WebPay::listPaymentMethods()](http://sveawebpay.github.io/php-integration#i66)
 
 ### 6.1 WebPay::createOrder() <a name="i61"></a>
-Use createOrder() to create an order and pay via invoice, payment plan, card, or direct bank payment methods.
+<!-- WebPay::createOrder() docblock below, replace @see with apidoc links -->
 
-See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.CreateOrderBuilder.html" target="_blank">CreateOrderBuilder</a> class for methods used to build the order object and select the payment method type to use.
+Use WebPay::createOrder() to create an order using invoice, payment plan, card, or direct bank payment methods.
+
+See the CreateOrderBuilder class for more info on methods used to specify the order builder contents
+and chosing a payment method to use, followed by sending the request to Svea and parsing the response.
+
+See the CreateOrderBuilder class for more info on methods used to specify the order builder contents
+and chosing a payment method to use, followed by sending the request to Svea and parsing the response.
+
+Invoice and Payment plan orders will perform a synchronous payment on doRequest(), and will return a response 
+object immediately.
+
+Card, Direct bank, and other hosted methods accessed via PayPage are asynchronous. They provide an html form 
+containing a formatted message to send to Svea, which in turn will send a request response to a given return url,
+where the response can be parsed using the SveaResponse class.
+
+```php
+<?php
+...
+     $order = WebPay::createOrder($config)
+         ->addOrderRow( $orderrow )          // required, see WebPayItem::orderRow
+         ->addFee( $shippingfee )            // optional, see WebPayItem for invoice, shipping fee
+         ->addDiscount( $discount )          // optional, see WebPayItem for fixed, relative discount
+         ->addCustomerDetails( $customer )   // required for invoice and payment plan payments, see WebPayItem for individual, company id.
+         ->setCountryCode("SE")              // required
+         ->setOrderDate(date('c'))           // required for invoice and payment plan payments
+         ->setCurrency("SEK")                // required for card payment, direct payment and PayPage payment.
+         ->setClientOrderNumber("A123456")   // required for card payment, direct payment, PaymentMethod payment and PayPage payments.
+         ->setCustomerReference("att: kgm")  // optional
+     ;
+...
+```
+
+See <a href="http://sveawebpay.github.io/php-integration/api/classes/WebPayItem.html" target="_blank">WebPayItem</a> class for entrypoint methods used to build order row item and customer identity objects.
+
+See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.CreateOrderBuilder.html" target="_blank">CreateOrderBuilder</a> class for methods used to specify various order attributes and select payment method to use.
 
 ### 6.2 WebPay::deliverOrder() <a name="i62"></a>
 <!-- WebPay::deliverOrder() docblock below, replace @see with apidoc links -->
