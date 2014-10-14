@@ -1134,8 +1134,8 @@ more information about the order and send the request using the queryOrderBuilde
     $request = WebPay::queryOrder($config)
          ->setOrderId()          // required
          ->setCountryCode()      // required      
-         ->queryInvoiceOrder()   // select ordertype and
-             ->doRequest()       // perform the request, returning a GetOrdersResponse
+         ->queryInvoiceOrder()   // select request class and
+             ->doRequest()       // perform the request, returns GetOrdersResponse
          
          //->queryPaymentPlanOrder()->doRequest() // returns GetOrdersResponse
          //->queryCardOrder()->doRequest()        // returns QueryTransactionResponse
@@ -1174,6 +1174,7 @@ resulting response code specifies the outcome of the request.
 Example of an order with an order row specified using setName() and setDescription():
 
 ```php
+<?php
 ...
 $orderRow = WebPayItem::orderRow()
     ...
@@ -1186,7 +1187,7 @@ $order->addOrderRow($orderRow)->useInvoicePayment()->doRequest;
 
 Querying the above order will result in a response having order rows with the following name and description:
 
-```php
+```php <?php
 ...
 $queryBuilder = WebPayAdmin::queryOrder($config)
     ->setOrderId($invoiceOrderIdToQuery)
