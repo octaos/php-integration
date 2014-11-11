@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.4
+## Version 2.2.5
 
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
@@ -282,9 +282,9 @@ Set any additional attributes needed to complete the order using the OrderBuilde
 $order
     ...
     ->setCountryCode("SE")                  // required
-    ->setCurrency("SEK")                    // required for card payment, direct payment and PayPage payment.
-    ->setClientOrderNumber("140506-261")    // required for card payment, direct payment, PaymentMethod payment and PayPage payments.
-    ->setCustomerReference("att: kgm")      // optional, ignored for card and direct bank orders
+    ->setCurrency("SEK")                    // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
+    ->setClientOrderNumber("A123456")       // required for card payment, direct payment, PaymentMethod & PayPage payments, max length 30 chars.
+    ->setCustomerReference("att: kgm")      // optional, ignored for card & direct bank orders, max length 30 chars.
     ->setOrderDate("2012-12-12")            // required for invoice and payment plan payments
 ;
 ...
@@ -820,15 +820,15 @@ where the response can be parsed using the SveaResponse class.
 <?php
 ...
      $order = WebPay::createOrder($config)
-         ->addOrderRow( $orderrow )          // required, see WebPayItem::orderRow
-         ->addFee( $shippingfee )            // optional, see WebPayItem for invoice, shipping fee
-         ->addDiscount( $discount )          // optional, see WebPayItem for fixed, relative discount
-         ->addCustomerDetails( $customer )   // required for invoice and payment plan payments, see WebPayItem for individual, company id.
-         ->setCountryCode("SE")              // required
-         ->setOrderDate(date('c'))           // required for invoice and payment plan payments
-         ->setCurrency("SEK")                // required for card payment, direct payment and PayPage payment.
-         ->setClientOrderNumber("A123456")   // required for card payment, direct payment, PaymentMethod payment and PayPage payments.
-         ->setCustomerReference("att: kgm")  // optional
+        ->addOrderRow( $orderrow )          // required, see WebPayItem::orderRow
+        ->addFee( $shippingfee )            // optional, see WebPayItem for invoice, shipping fee
+        ->addDiscount( $discount )          // optional, see WebPayItem for fixed, relative discount
+        ->addCustomerDetails( $customer )   // required for invoice and payment plan payments, see WebPayItem for individual, company id.
+        ->setCountryCode("SE")              // required
+        ->setOrderDate(date('c'))           // required for invoice and payment plan payments
+        ->setCurrency("SEK")                // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
+        ->setClientOrderNumber("A123456")   // required for card payment, direct payment, PaymentMethod & PayPage payments, max length 30 chars.
+        ->setCustomerReference("att: kgm")  // optional, ignored for card & direct bank orders, max length 30 chars.
      ;
 ...
 ```
