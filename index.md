@@ -651,32 +651,33 @@ setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setA
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.InvoiceFee.html" target="_blank">InvoiceFee</a> class methods for details.
 
 ### 5.5 WebPayItem::fixedDiscount() <a name="i55"></a>
-Use this method when the discount or coupon is expressed as a percentage of the total product amount.
+Use WebPayItem::fixedDiscount() when the discount or coupon is expressed as a fixed discount amount. 
 
-#### 5.5.1 Usage
-If only AmountIncVat is given, we calculate the discount split across the tax (vat) rates present in the order. This will ensure that the correct discount vat is applied to the order.
+If no vat rate is given, we calculate the discount split across the order row vat rates present in the order. 
+This will ensure that the correct discount vat is applied to the order.
 
-Otherwise, it is required to use at least two of the functions `setAmountExVat()`, `setAmountIncVat()` and `setVatPercent()`. If two of these three attributes are specified, we respect the amount indicated and include a discount with the appropriate tax rate.
+If there are several vat rates present in the order, the discount will be split proportionally across the order row vat 
+rates. For examples, including the resulting discount rows, see the test suite file UnitTest/InvoicePaymentTest.php.
+
+Otherwise, it is required to use at least two of the functions setAmountExVat(), setAmountIncVat() and setVatPercent().
+If two of these three attributes are specified, we honour the amount indicated and the given discount tax rate.
 
 ```php
 <?php
 ...
-$order->
-    addDiscount(
-        WebPayItem::fixedDiscount()
-            ->setAmountIncVat(100.00)               // recommended, see info above
-            ->setAmountExVat(1.0)                   // optional, see info above
-            ->setVatPercent(25)                     // optional, see info above
-            ->setDiscountId("1")                    // optional
-            ->setUnit("st")                         // optional
-            ->setDescription("FixedDiscount")       // optional
-            ->setName("Fixed")                      // optional
-    )
-;
+     $fixedDiscount = WebPayItem::fixedDiscount()
+         ->setAmountIncVat(100.00)               // recommended, see info above
+         ->setAmountExVat(1.0)                   // optional, see info above
+         ->setVatPercent(25)                     // optional, see info above
+         ->setDiscountId("1")                    // optional
+         ->setUnit("st")                         // optional
+         ->setName("Fixed")                      // optional
+         ->setDescription("FixedDiscount")       // optional
+     );
 ...
 ```
 
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.FixedDiscount.html" target="_blank">FixedDiscount</a> class methods for details on how to specify the item, including all *required* methods.
+See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.FixedDiscount.html" target="_blank">FixedDiscount</a> class methods for details on how to specify the item.
 
 ### 5.6 WebPayItem::relativeDiscount() <a name="i56"></a>
 Use WebPayItem::relativeDiscount() when the discount or coupon is expressed as a percentage of the total product amount.
@@ -702,7 +703,7 @@ Specify the discount using RelativeDiscount methods:
 ...
 ```
 
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.RelativeDiscount.html" target="_blank">RelativeDiscount</a> class methods for details on how to specify the item, including all *required* methods.
+See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.RelativeDiscount.html" target="_blank">RelativeDiscount</a> class methods for details on how to specify the item.
 
 ### 5.7 WebPayItem::individualCustomer() <a name="i57"></a>
 Read "required" below as a requirement only when the IndividualCustomer is used to identify the customer when using the invoice or payment plan payment methods. (For card and direct bank orders, adding customer information to the order is optional.)
