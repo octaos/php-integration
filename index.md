@@ -684,10 +684,8 @@ Use WebPayItem::relativeDiscount() when the discount or coupon is expressed as a
 The discount will be calculated based on the total sum of all order rows specified using addOrderRow(), it does not 
 apply to invoice or shipping fees. 
 
-If there are several vat rates present in the order, the discount will be split proportionally across the different 
-vat rates. See the test suite for example discount orders, including the resulting discount rows.
-
-See Unittest/OrderBuilderTest.php, UnitTest/InvoicePaymentTest.php, Integrationtest/CardPaymentIntegrationTest.php.
+If there are several vat rates present in the order, the discount will be split proportionally across the order row vat 
+rates. For examples, including the resulting discount rows, see the test suite file UnitTest/InvoicePaymentTest.php.
 
 Specify the discount using RelativeDiscount methods:
 
