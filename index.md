@@ -679,22 +679,28 @@ $order->
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.FixedDiscount.html" target="_blank">FixedDiscount</a> class methods for details on how to specify the item, including all *required* methods.
 
 ### 5.6 WebPayItem::relativeDiscount() <a name="i56"></a>
-Use this method when the discount or coupon is expressed as a percentage of the total product amount.
+Use WebPayItem::relativeDiscount() when the discount or coupon is expressed as a percentage of the total product amount.
 
-#### 5.6.1 Usage
+The discount will be calculated based on the total sum of all order rows specified using addOrderRow(), it does not 
+apply to invoice or shipping fees. 
+
+If there are several vat rates present in the order, the discount will be split proportionally across the different 
+vat rates. See the test suite for example discount orders, including the resulting discount rows.
+
+See Unittest/OrderBuilderTest.php, UnitTest/InvoicePaymentTest.php, Integrationtest/CardPaymentIntegrationTest.php.
+
+Specify the discount using RelativeDiscount methods:
+
 ```php
 <?php
 ...
-$order->
-    addDiscount(
-        WebPayItem::relativeDiscount()
-        ->setDiscountPercent(50.5)              // required
-        ->setDiscountId("1")                    // optional
-        ->setUnit("st")                         // optional
-        ->setName('Relative')                   // optional
-        ->setDescription("RelativeDiscount")    // optional
-    )
-;
+    $relativeDiscount = WebPayItem::relativeDiscount()
+        ->setDiscountPercent(10.0)          // required
+        ->setDiscountId("1")                // optional
+        ->setUnit("st.")                    // optional
+        ->setName("DiscountName")           // optional
+        ->setDescription("DiscountDesc.")   // optional
+    );
 ...
 ```
 
