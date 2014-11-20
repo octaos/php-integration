@@ -863,6 +863,9 @@ turned off, please contact Svea if unsure.)
 To deliver an invoice, partpayment or card order in full, you do not need to 
 specify order rows. To partially deliver an order, the recommended way is to
 use WebPayAdmin::deliverOrderRows().
+
+For more information on using deliverOrder to partially deliver and/or credit
+an order, see 6.2.3 below.
  
 Get an order builder instance using the WebPay::deliverOrder entrypoint, then
 provide more information about the transaction using DeliverOrderBuilder methods: 
@@ -947,6 +950,55 @@ $myResponse = $myDeliverOrderRequest->doRequest();
 ?>
 ```
 The above example can be found in the <a href="http://github.com/sveawebpay/php-integration/blob/master/example/firstdeliver/" target="_blank">example/firstdeliver</a> folder.
+
+6.2.3 On using WebPay::deliverOrder with order rows
+WebPay::deliverOrder may be used to partially deliver, amend or credit an order, by specifying order rows using the DeliverOrderBuilder addOrderRow() method. We recommend using WebPayAdmin::deliverOrderRows to partially deliver an order and WebPayAdmin::creditOrderRows to credit an order.
+
+6.2.3.1 Partial delivery using WebPay::deliverOrder
+When using WebPay::deliverOrder to partially deliver an order, care must be taken that the order rows to deliver precisely match the order row specification used in the original WebPay::createOrder request. Unless all order rows in the deliverOrder request exactly match rows in the original createOrder request, unmatched order rows in the original order will be cancelled. See also x.x.2 Amending an order.
+
+If on the other hand all deliver order rows match with original order rows, then the original order rows matched by the deliver order rows will be invoiced, with the invoice id being returned in the DeliverOrderResponse. The remaining original order rows will remain undelivered and may be delivered in a subsequent deliverOrder request.
+
+```
+Example:
+1. cResponse = WebPay::createOrder()->addOrderRows(A)->addOrderRows(B)->addOrderRows(C)->...->doRequest();
+2. dResponse = WebPay::deliverOrder()->addOrderRows(A)->...->doRequest(); // A matches A
+Will result in the order having status
+A: delivered	// found on invoice # dResponse->getInvoiceId()
+B: undelivered  // may be delivered later
+C: undelivered  // may be delivered later
+```
+
+6.2.3.2 Amending an order using WebPay::deliverOrder
+If you wish to add an order row to an existing order, any original order rows still undelivered will be cancelled to make room for the added order rows within the original order total amount (you may deliver order rows in the same request by adding order rows that exactly match the original order rows).
+
+The exact behaviour is that if there are order rows in the deliver order request that does not match any undelivered original order row, all unmatched and undelivered original order rows are cancelled, and the unmatched deliver order rows are added to the original order as new delivered order rows, given that as the total of all existing delivered rows and the newly added order rows does not exceed the total original order row total amount. This means that the sum of the unmatched (i.e. added) deliver order rows cannot exceed the sum of the cancelled original order rows.
+
+When there are delivered order rows to an amount equal to the original order total amount the order will be closed, preventing further modification. Delivered order rows can only be credited, see x.x.3 below.
+
+```
+Example (cont. from x.x.1):
+3. dResponse2 = WebPay::deliverOrder()->addOrderRows(D)->...->doRequest(); // D does not match any rows
+Will result in the order having status
+A: delivered	// found on invoice1; dResponse->getInvoiceId()
+B: cancelled  
+C: cancelled  
+D: delivered	// found on invoice2; dResponse2->getInvoiceId()
+```
+
+6.2.3.3 Crediting a (partially) delivered order using WebPay::deliverOrder
+To credit an order use the setCreditInvoice(invoiceId) method when delivering an order. Add an order row made out to the amount to be credited to the deliver order request. A credit invoice with the order rows specified will be issued to the customer. 
+
+When crediting a delivered order, you are really crediting an invoice. This means that if you i.e. partially delivered an order, and then need to credit the entire order, you will need to make several crerequests, as a credit invoice amount can't exceed the individual invoice total amount.
+
+The invoice id received will point to the new credit invoice itself, and the original invoice will be be credited at Svea by the specified amount. Note that the original order row status will not change, the as the request operates on the invoice, not the order in itself.
+
+```
+Example (cont. from x.x.2):
+4. dResponse3 = WebPay::deliverOrder()->addOrderRows(E)->setCreditInvoice(invoice1)...->doRequest(); 
+//To credit i.e. 50% of the price for order row A we created a new order row E with half the price of A.
+//The credit invoice id is returned in dResponse3->getInvoiceId()
+```
 
 ### 6.3 WebPay::getAddresses() <a name="i63"></a>
 <!-- WebPay::getAddresses() docblock below, replace @see with apidoc links -->
