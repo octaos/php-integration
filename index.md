@@ -786,7 +786,7 @@ $myNumberedOrderRow =
         //numberedOrderRow
         ->setCreditInvoiceId($creditInvoiceIdAsNumeric)         //optional
         ->setInvoiceId($invoiceIdAsNumeric)                     //optional
-        ->setRowNumber($rowNumberAsNumeric)                     //optional
+        ->setRowNumber($rowNumberAsNumeric)                     //required for updateOrderrow
         ->setStatus(NumberedOrderRow::ORDERROWSTATUS_DELIVERED) //optional, one of _DELIVERED, _NOTDELIVERED, _CANCELLED
 ;
 ...
@@ -1246,7 +1246,7 @@ more information about the order and send the request using the queryOrderBuilde
 ```php
 <?php
 ...
-    $request = WebPay::queryOrder($config)
+    $request = WebPayAdmin::queryOrder($config)
          ->setOrderId()          // required
          ->setCountryCode()      // required
          ->queryInvoiceOrder()   // select request class and
@@ -1345,16 +1345,16 @@ For card orders, use addNumberedOrderRow() or addNumberedOrderRows() to pass in 
 ...
     $request = WebPayAdmin::cancelOrderRows($config)
         ->setOrderId()          		// required
-        ->setTransactionId()	   		// optional, card only, alias for setOrderId 
-        ->setCountryCode()      		// required    	
-        ->setRowToCancel()	   		// required, index of original order rows you wish to cancel 
-        ->addNumberedOrderRow()			// required for card orders, should match original row indexes 
+        ->setTransactionId()	   		// optional, card only, alias for setOrderId
+        ->setCountryCode()      		// required
+        ->setRowToCancel()	   		// required, index of original order rows you wish to cancel
+        ->addNumberedOrderRow()			// required for card orders, should match original row indexes
     ;
     // then select the corresponding request class and send request
     $response = $request->deliverInvoiceOrderRows()->doRequest();       // returns CancelOrderRowsResponse
     $response = $request->deliverPaymentPlanOrderRows()->doRequest();   // returns CancelOrderRowsResponse
     $response = $request->deliverCardOrderRows()->doRequest();          // returns LowerTransactionResponse
-    
+
 ...
 ```
 
@@ -1544,20 +1544,20 @@ For card orders, use addNumberedOrderRow() or addNumberedOrderRows() to pass in 
 
 ```php
 <?php
-... 
+...
      $request = WebPayAdmin::deliverOrderRows($config)
          ->setOrderId()          		// required
-         ->setTransactionId()	   		// optional, card only, alias for setOrderId 
-         ->setCountryCode()      		// required    	
+         ->setTransactionId()	   		// optional, card only, alias for setOrderId
+         ->setCountryCode()      		// required
          ->setInvoiceDistributionType()         // required, invoice only
-         ->setRowToDeliver()	   		// required, index of original order rows you wish to cancel 
-         ->addNumberedOrderRow()		// required for card orders, should match original row indexes 
+         ->setRowToDeliver()	   		// required, index of original order rows you wish to cancel
+         ->addNumberedOrderRow()		// required for card orders, should match original row indexes
      ;
      // then select the corresponding request class and send request
      $response = $request->deliverInvoiceOrderRows()->doRequest();       // returns CancelOrderRowsResponse
      $response = $request->deliverPaymentPlanOrderRows()->doRequest();   // returns CancelOrderRowsResponse
      $response = $request->deliverCardOrderRows()->doRequest();          // returns ConfirmTransactionResponse
-... 
+...
 ```
 
 The final doRequest() returns a DeliverOrderRowsResponse or ConfirmTransactionResponse.
