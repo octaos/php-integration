@@ -880,7 +880,7 @@ provide more information about the transaction using DeliverOrderBuilder methods
 ...
      $request = WebPay::deliverOrder($config)
          ->setOrderId()                  // invoice or payment plan only, required
-         ->setTransactionId()            // card only, optional -- you can also use setOrderId
+         ->setTransactionId()            // card only, optional, alias for setOrderId 
          ->setCountryCode()              // required
          ->setInvoiceDistributionType()  // invoice only, required
          ->setNumberOfCreditDays()       // invoice only, optional
@@ -1171,44 +1171,29 @@ The WebPayAdmin class methods are used to administrate orders after they have be
 * [7.7 WebPayAdmin::deliverOrderRows()](http://sveawebpay.github.io/php-integration#i77)
 
 ### 7.1 WebPayAdmin::cancelOrder() <a name="i71"></a>
-The WebPayAdmin::cancelOrder method is used to cancel an order with Svea, that has not yet been delivered (invoice, payment plan) or confirmed (card).
 
-Direct bank orders are not supported, see WebPayAdmin::creditOrder.
+The WebPayAdmin::cancelOrder() entrypoint method is used to cancel an order with Svea, 
+that has not yet been delivered (invoice, payment plan) or confirmed (card).
 
-CancelOrderBuilder is the class used to cancel an order with Svea, that has
-not yet been delivered (invoice, payment plan) or been confirmed (card).
-
-Supports Invoice, Payment Plan and Card orders. For Direct Bank orders, @see
-CreditOrderBuilder instead.
-
-Use setOrderId() to specify the Svea order id, this is the order id returned
-with the original create order request response.
-
-Use setCountryCode() to specify the country code matching the original create
-order request.
-
-Use either cancelInvoiceOrder(), cancelPaymentPlanOrder or cancelCardOrder,
-which ever matches the payment method used in the original order request.
-
-The final doRequest() will send the cancelOrder request to Svea, and the
-resulting response object contents holds outcome of the request.
+Supports Invoice, Payment Plan and Card orders. For Direct Bank orders, use WebPayAdmin.creditOrderRows() instead.
+ 
+Get an instance using the WebPayAdmin.queryOrder entrypoint, then provide more information about the order and send 
+the request using the CancelOrderBuilder methods:
 
 ```php
 <?php
 ...
-    $response = WebPay::cancelOrder($config)
-        ->setCountryCode("SE")          // Required. Use same country code as in createOrder request.
-        ->setOrderId($orderId)          // Required. Use SveaOrderId received with createOrder response
-        ->cancelInvoiceOrder()          // Use the method corresponding to the original createOrder payment method.
-        //->cancelPaymentPlanOrder()
-        //->cancelCardOrder()
-             ->doRequest()
+    $request = WebPayAdmin->cancelOrder($config)
+         ->setOrderId()		// required, use SveaOrderId recieved with createOrder response
+         ->setTransactionId()	// optional, card or direct bank only, alias for setOrderId 
+         ->setCountryCode()	// required, use same country code as in createOrder request      
     ;
+    // then select the corresponding request class and send request
+    $response = $request->cancelInvoiceOrder()->doRequest();        // returns CloseOrderResponse
+    $response = $request->cancelPaymentPlanOrder()->doRequest();    // returns CloseOrderResponse
+    $response = $request->cancelCardOrder()->doRequest();           // returns AnnulTransactionResponse
 ...
 ```
-
-#### 7.1.1 Usage
-Cancel an undelivered/unconfirmed order. Supports Invoice, PaymentPlan and Card orders. (For Direct Bank orders, see CreditOrder instead.)
 
 The final doRequest() returns either a CloseOrderResult or an AnnulTransactionResponse:
 
@@ -1218,21 +1203,6 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebSer
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.AnnulTransactionResponse.html" target="_blank">AnnulTransactionResponse</a> for card orders response.
 
-#### 7.1.2 Example
-```php
-<?php
-...
-    $request =
-        WebPay::cancelOrder($config)
-            ->setCountryCode("SE")          // Required. Use same country code as in createOrder request.
-            ->setOrderId($orderId)          // Required. Use SveaOrderId recieved with createOrder response
-            ->cancelInvoiceOrder()          // Use the method corresponding to the original createOrder payment method.
-            //->cancelPaymentPlanOrder()
-            //->cancelCardOrder()
-    ;
-    $response = $request->doRequest();      // send request and receive either WebService\CloseOrderResponse or HostedService\AnnulTransactionResponse
-...
-```
 
 ### 7.2 WebPayAdmin::queryOrder() <a name="i72"></a>
 The WebPayAdmin::queryOrder entrypoint method is used to get information about an order.
@@ -1240,8 +1210,8 @@ The WebPayAdmin::queryOrder entrypoint method is used to get information about a
 Note that for invoice and payment plan orders, the order rows name and description is merged
 into the description field in the query response.
 
-Get an query builder instance using the WebPayAdmin::queryOrder entrypoint, then provide
-more information about the order and send the request using the queryOrderBuilder methods:
+Get an instance using the WebPayAdmin::queryOrder entrypoint, then provide more
+information about the order and send the request using the queryOrderBuilder methods:
 
 ```php
 <?php
