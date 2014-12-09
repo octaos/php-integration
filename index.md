@@ -1195,8 +1195,6 @@ the request using the CancelOrderBuilder methods:
 ...
 ```
 
-The final doRequest() returns either a CloseOrderResult or an AnnulTransactionResponse:
-
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.CancelOrderBuilder.html" target="_blank">CancelOrderBuilder</a> class for methods used to build the order object and select the order type to cancel.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.CloseOrderResult.html" target="_blank">CloseOrderResult</a> for invoice and payment plan orders response.
@@ -1210,26 +1208,24 @@ The WebPayAdmin::queryOrder entrypoint method is used to get information about a
 Note that for invoice and payment plan orders, the order rows name and description is merged
 into the description field in the query response.
 
-Get an instance using the WebPayAdmin::queryOrder entrypoint, then provide more
-information about the order and send the request using the queryOrderBuilder methods:
-
+Get an instance using the WebPayAdmin::queryOrder entrypoint, then provide more information 
+about the order and send the request using the QueryOrderBuilder methods: 
+ 
 ```php
 <?php
 ...
-    $request = WebPayAdmin::queryOrder($config)
-         ->setOrderId()          // required
-         ->setCountryCode()      // required
-         ->queryInvoiceOrder()   // select request class and
-             ->doRequest()       // perform the request, returns GetOrdersResponse
-
-         //->queryPaymentPlanOrder()->doRequest() // returns GetOrdersResponse
-         //->queryCardOrder()->doRequest()        // returns QueryTransactionResponse
-         //->queryDirectBankOrder()->doRequest()  // returns QueryTransactionResponse
-    ;
+     $request = WebPay::queryOrder($config)
+         ->setOrderId()          // required, use SveaOrderId recieved with createOrder response
+         ->setTransactionId()    // optional, card or direct bank only, alias for setOrderId 
+         ->setCountryCode()      // required, use same country code as in createOrder request     
+     ;
+     // then select the corresponding request class and send request
+     $response = $request->queryInvoiceOrder()->doRequest();     // returns GetOrdersResponse
+     $response = $request->queryPaymentPlanOrder()->doRequest(); // returns GetOrdersResponse
+     $response = $request->queryCardOrder()->doRequest();        // returns QueryTransactionResponse
+     $response = $request->queryDirectBankOrder()->doRequest();  // returns QueryTransactionResponse    
 ...
 ```
-
-The final doRequest() returns either a GetOrdersResponse or an QueryTransactionResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.QueryOrderBuilder.html" target="_blank">QueryOrderBuilder</a> method details.
 
@@ -1237,24 +1233,7 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminS
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.QueryTransactionResponse.html" target="_blank">QueryTransactionResponse</a> for card and direct bank orders response.
 
-#### 7.2.1 Usage
-QueryOrderBuilder is the class used to query information about an order from Svea.
-
-Use setOrderId() to specify the Svea order id, this is the order id returned
-with the original create order request response as either sveaOrderId or transactionId.
-
-Use setCountryCode() to specify the country code matching the original create
-order request.
-
-Then get a request object using either queryInvoiceOrder(), queryPaymentPlanOrder(),
-queryCardOrder(), or queryDirectBankOrder(), which ever matches the payment method
-used in the original order request, and send the query request to svea using the
-request object doRequest() method.
-
-The final doRequest() will send the queryOrder request to Svea, and the
-resulting response code specifies the outcome of the request.
-
-#### 7.2.2 Example
+#### 7.2.1 QueryOrder Example
 
 Example of an order with an order row specified using setName() and setDescription():
 
@@ -1327,8 +1306,6 @@ For card orders, use addNumberedOrderRow() or addNumberedOrderRows() to pass in 
 
 ...
 ```
-
-The final doRequest() returns either a CancelOrderRowsResponse or a LowerTransactionResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.CancelOrderRowsBuilder.html" target="_blank">CancelOrderRowsBuilder</a> method details.
 
@@ -1529,8 +1506,6 @@ For card orders, use addNumberedOrderRow() or addNumberedOrderRows() to pass in 
      $response = $request->deliverCardOrderRows()->doRequest();          // returns ConfirmTransactionResponse
 ...
 ```
-
-The final doRequest() returns a DeliverOrderRowsResponse or ConfirmTransactionResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.DeliverOrderRowsBuilder.html" target="_blank">CreditOrderRowsBuilder</a> method details.
 
