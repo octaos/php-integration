@@ -889,15 +889,17 @@ provide more information about the transaction using DeliverOrderBuilder methods
          ->setCreditInvoice()            // deprecated, optional -- use WebPayAdmin::creditOrderRows instead
      ;
      // then select the corresponding request class and send request
-     $response = $request->deliverInvoiceOrder()->doRequest();       // returns DeliverOrderResult
-     $response = $request->deliverPaymentPlanOrder()->doRequest();   // returns DeliverOrderResult
+     $response = $request->deliverInvoiceOrder()->doRequest();       // returns DeliverOrdersResponse (no rows) or DeliverOrderResult (with rows)
+     $response = $request->deliverPaymentPlanOrder()->doRequest();   // returns DeliverOrdersResponse (no rows) or DeliverOrderResult (with rows)
      $response = $request->deliverCardOrder()->doRequest();          // returns ConfirmTransactionResponse
 ...
 ```
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.DeliverOrderBuilder.html" target="_blank">DeliverOrderBuilder</a> class for methods used to build the order object and select the order type to deliver.
 
-See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.DeliverOrderResult.html" target="_blank">DeliverOrderResult</a> for invoice and payment plan orders response.
+See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminService.DeliverOrdersResponse.html" target="_blank">DeliverOrdersResponse</a> for invoice and payment plan orders response when no order rows are specified.
+
+See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.DeliverOrderResult.html" target="_blank">DeliverOrderResult</a> for invoice and payment plan orders response where order rows were included.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.ConfirmTransactionResponse.html" target="_blank">ConfirmTransactionResponse</a> for card orders response.
 
