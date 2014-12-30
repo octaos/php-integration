@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.8
+## Version 2.2.9
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
@@ -1009,31 +1009,50 @@ Example (cont. from 6.2.3.2):
 
 ### 6.3 WebPay::getAddresses() <a name="i63"></a>
 <!-- WebPay::getAddresses() docblock below, replace @see with apidoc links -->
-The WebPay::getAddresses() entrypoint is used to fetch validated addresses associated with a given customer identity. Only applicable for SE, NO and DK customers. Note that in Norway, company customers only are supported.
+The WebPay::getAddresses() entrypoint is used to fetch a list validated addresses 
+associated with a given customer identity. This list can in turn be used to i.e. 
+verify that an order delivery address matches the invoice address used by Svea for 
+invoice and payment plan orders. Only applicable for SE, NO and DK customers. 
+Note that in Norway, company customers only are supported.
 
-Use getAddresses() to fetch a list of validated addresses associated with a given customer identity. This list can in turn be used to i.e. verify that an order delivery address matches the invoice address used by Svea for invoice and payment plan orders.
+Get an request class instance using the WebPay::getAddresses entrypoint, then
+provide more information about the transaction and send the request using the
+request class methods:
 
-Get an request class instance using the WebPay::getAddresses entrypoint, then provide more information about the transaction and send the request using the request class methods:
+Use setCountryCode() to supply the country code that corresponds to the account 
+credentials used for the address lookup. Note that this means that you cannot 
+look up a user in a foreign country, this is a consequence of the fact that the 
+invoice and partpayment methods don't support foreign orders.
+
+Use setCustomerIdentifier() to provide the exact credentials needed to identify 
+the customer according to country:
+     SE: Personnummer (private individual) or Organisationsnummer (company/legal entity)
+     NO: Organisasjonsnummer (company or other legal entity)
+     DK: Cpr.nr (private individual) or CVR-nummer (company or other legal entity)
+
+Then use either getIndividualAddresses() or getCompanyAddresses() depending on what kind of customer you want to look up.
+ 
+The final doRequest() will send the getAddresses request to Svea and return the result. 
+
+The doRequest() method will then check if there exists credentials to use for the request in the given configurationProvider.
+
+(Note that this behaviour may cause problems if your integration is set to use different (test/production) credentials 
+for invoice and payment plan -- if you get an error and this is the case, you may use one of the deprecated methods 
+setOrderTypeInvoice() or setOrderTupePaymentPlan() to explicity state which method credentials to use.)
 
 ```php
 <?php
 ...
-->setCountryCode()           (required -- supply the country code that corresponds to the account credentials used for the address lookup)
-->setIdentifier()            (required -- i.e. the social security number, company vat number et al for the country in question)
-
-The following methods are deprecated starting with 2.2 of the package
-->setIndividual()            (deprecated, -- lookup the address of a private individual, set to i.e. social security number)
-->setCompany()               (deprecated -- lookup the addresses associated with a legal entity (i.e. company)
-->setOrderTypeInvoice()      (deprecated -- supply the method that corresponds to the account credentials used for the address lookup)
-->setOrderTypePaymentPlan()  (deprecated -- supply the method that corresponds to the account credentials used for the address lookup)
-
-Finish by selecting the correct customer type and perform the request:
-->getIndividualAddresses() // or getCompanyAddresses()
-  ->doRequest()
-...
+       $request = WebPay::getAddresses($config)
+           ->setCountryCode()                  // required -- the country to perform the customer address lookup in
+           ->setCustomerIdentifier()           // required -- social security number, company vat number etc. used to identify customer
+           ->setOrderTypeInvoice()             // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
+           ->setOrderTypePaymentPlan()         // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
+       ;
+       // then select the corresponding request class and send request
+      $response = $request->getIndividualAddresses()->doRequest();    // returns GetAddressesResponse
+      $response = $request->getCompanyAddresses()->doRequest();       // returns GetAddressesResponse
 ```
-
-The final doRequest() returns a GetAddressesResponse.
 
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.GetAddresses.html" target="_blank">GetAddresses</a> class.
 
