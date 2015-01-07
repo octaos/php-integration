@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.9
+## Version 2.2.10
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
@@ -341,9 +341,11 @@ The service response received is sent as an XML message, use the SveaResponse re
 
 *I wish to set up a subscription using recurring card payments, which will renew each month without further end user interaction.*
 
->For recurring payments, first create an order and select a card payment method with `->usePaymentMethod()`. Use the `setSubscriptionType()` method on the resulting payment request object. When the end user completes the transaction, you will receive a subscription id in the response.
+>For recurring payments, first create an order and select a card payment method with `->usePaymentMethod()`. You then use the `setSubscriptionType()` method on the resulting payment request object. When the end user completes the transaction, you will receive a subscription id in the response.
 
-For the monthly subscription payments, you build the order and again select the card payment method with `->usePaymentMethod()`. Then use `setSubscriptionId()` with the above subscription id and finally send the recur payment request using the `->doRecur()` method.
+>For subsequent recurring payments, you build an order and again select the card payment method with `->usePaymentMethod()`. Then use `setSubscriptionId()` with the subscription id from the initial request. Then send the payment request using the `->doRecur()` method.
+
+>See also section 4.3.3.
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
@@ -448,9 +450,9 @@ $form = $order
 #### 4.3.3 Recurring card payments
 Recurring card payments are set up in two steps. First a card payment including the subscription request, where the customer enters their credentials, and then any subsequent recur payment requests, where the subscription id is used in lieu of customer interaction.
 
-For recurring payments, first create an order and select a card payment method with `->usePaymentMethod()`. Use the `setSubscriptionType()` method on the resulting payment request object. When the end user completes the transaction, you will receive a subscription id in the response.
+For recurring payments, first create an order and select a card payment method with `->usePaymentMethod()`. You then use the `setSubscriptionType()` method on the resulting payment request object. When the end user completes the transaction, you will receive a subscription id in the response.
 
-For the monthly subscription payments, you build the order and again select the card payment method with `->usePaymentMethod()`. Then use `setSubscriptionId()` with the above subscription id and finally send the recur payment request using the `->doRecur()` method.
+For subsequent recurring payments, you build an order and again select the card payment method with `->usePaymentMethod()`. Then use `setSubscriptionId()` with the subscription id from the initial request. Then send the payment request using the `->doRecur()` method.
 
 An example of an recurring card order, both the setup transaction and a recurring payment, can be found in the <a href="http://github.com/sveawebpay/php-integration/blob/master/example/cardorder_recur/" target="_blank">example/cardorder_recur</a> folder.
 
