@@ -1323,9 +1323,9 @@ For card orders, use addNumberedOrderRow() or addNumberedOrderRows() to pass in 
         ->addNumberedOrderRow()			// required for card orders, should match original row indexes
     ;
     // then select the corresponding request class and send request
-    $response = $request->deliverInvoiceOrderRows()->doRequest();       // returns CancelOrderRowsResponse
-    $response = $request->deliverPaymentPlanOrderRows()->doRequest();   // returns CancelOrderRowsResponse
-    $response = $request->deliverCardOrderRows()->doRequest();          // returns LowerTransactionResponse
+    $response = $request->cancelInvoiceOrderRows()->doRequest();       // returns CancelOrderRowsResponse
+    $response = $request->cancelPaymentPlanOrderRows()->doRequest();   // returns CancelOrderRowsResponse
+    $response = $request->cancelCardOrderRows()->doRequest();          // returns LowerTransactionResponse
 
 ...
 ```
@@ -1360,7 +1360,7 @@ transaction and send the request using the creditOrderRowsBuilder methods:
 ```php
 <?php
 ...
-    $request = WebPay::creditOrder($config)
+    $request = WebPay::creditOrderRows($config)
         ->setInvoiceId()                // invoice only, required
         ->setInvoiceDistributionType()  // invoice only, required
         ->setOrderId()                  // card and direct bank only, required
