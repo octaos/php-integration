@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.11
+## Version 2.2.12
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
@@ -998,7 +998,7 @@ D: delivered	// found on invoice2; dResponse2->getInvoiceId()
 ##### 6.2.3.3 Crediting a (partially) delivered order using WebPay::deliverOrder
 To credit an order use the setCreditInvoice(invoiceId) method when delivering an order. Add an order row made out to the amount to be credited to the deliver order request. A credit invoice with the order rows specified will be issued to the customer.
 
-When crediting a delivered order, you are really crediting an invoice. This means that if you i.e. partially delivered an order, and then need to credit the entire order, you will need to make several crerequests, as a credit invoice amount can't exceed the individual invoice total amount.
+When crediting a delivered order, you are really crediting an invoice. This means that if you i.e. partially delivered an order, and then need to credit the entire order, you will need to make several credit requests, as a credit invoice amount can't exceed the individual invoice total amount.
 
 The invoice id received will point to the new credit invoice itself, and the original invoice will be be credited at Svea by the specified amount. Note that the original order row status will not change, the as the request operates on the invoice, not the order in itself.
 
@@ -1200,7 +1200,7 @@ that has not yet been delivered (invoice, payment plan) or confirmed (card).
 
 Supports Invoice, Payment Plan and Card orders. For Direct Bank orders, use WebPayAdmin.creditOrderRows() instead.
  
-Get an instance using the WebPayAdmin.queryOrder entrypoint, then provide more information about the order and send 
+Get an instance using the WebPayAdmin.cancelOrder entrypoint, then provide more information about the order and send 
 the request using the CancelOrderBuilder methods:
 
 ```php
@@ -1360,7 +1360,7 @@ transaction and send the request using the creditOrderRowsBuilder methods:
 ```php
 <?php
 ...
-    $request = WebPay::creditOrderRows($config)
+    $request = WebPayAdmin::creditOrderRows($config)
         ->setInvoiceId()                // invoice only, required
         ->setInvoiceDistributionType()  // invoice only, required
         ->setOrderId()                  // card and direct bank only, required
@@ -1502,7 +1502,7 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminS
 <!-- WebPayAdmin::deliverOrderRows() docblock below, replace @see with apidoc links -->
 The WebPayAdmin::deliverOrderRows entrypoint method is used to deliver individual order rows. Supports invoice and card orders. (To partially deliver PaymentPlan or Direct Bank orders, please contact Svea.)
 
-For Invoice and Payment Plan orders, the order row status is updated at Svea following each successful request.
+For Invoice orders, the order row status is updated at Svea following each successful request.
 
 For card orders, an order can only be delivered once, and any non-delivered order rows will be cancelled (i.e. the order amount will be lowered by the sum of the non-delivered order rows). A delivered card order has status CONFIRMED at Svea.
 
@@ -1524,17 +1524,17 @@ For card orders, use addNumberedOrderRow() or addNumberedOrderRows() to pass in 
          ->addNumberedOrderRow()		// required for card orders, should match original row indexes
      ;
      // then select the corresponding request class and send request
-     $response = $request->deliverInvoiceOrderRows()->doRequest();       // returns CancelOrderRowsResponse
-     $response = $request->deliverPaymentPlanOrderRows()->doRequest();   // returns CancelOrderRowsResponse
+     $response = $request->deliverInvoiceOrderRows()->doRequest();       // returns DeliverOrderRowsResponse
+     $response = $request->deliverPaymentPlanOrderRows()->doRequest();   // returns DeliverOrderRowsResponse
      $response = $request->deliverCardOrderRows()->doRequest();          // returns ConfirmTransactionResponse
 ...
 ```
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.DeliverOrderRowsBuilder.html" target="_blank">CreditOrderRowsBuilder</a> method details.
 
-See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.ConfirmTransactionResponse.html" target="_blank">ConfirmTransactionResponse</a> for card orders response.
-
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminService.DeliverOrderRowsResponse.html" target="_blank">DeliverOrderRowsResponse</a> for invoice orders response.
+
+See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.ConfirmTransactionResponse.html" target="_blank">ConfirmTransactionResponse</a> for card orders response.
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
@@ -1607,11 +1607,18 @@ The key point is that the merchant must have an agreement with their acquiring b
 *tl;dr*
 For invoice and part payment, the order amount is assumed to be made out in the country currency. For credit card and direct bank transfer, we honour the specified currency and amount, but you should only specify currencies that you have agreed upon with your acquiring bank.
 
+### 10.2 Other payment method credentials <a name="i102"></a>
+**Q**: What credentials do I need to make use of i.e. PayPal as a payment method through the PayPage?
+
+**A**: When you sign up with Svea you will be provided with a merchant id which is used for all hosted payment methods. For a merchant id, one or more payment methods may be enabled, such as credit cards, direct bank payments using various banks, PayPal etc. 
+
+To enable a new payment method, your merchant will need to be configured with various credentials as requested by Svea. Please ask your Svea integration manager for more information on what exact credentials are needed.
+
 ## APPENDIX <a name="appendix"></a>
 
 ### PaymentMethods
 Used in usePaymentMethod($paymentMethod) and in usePayPage()->includePaymentMethods(..., ..., ...) et al.
-
+```
 | Payment method                    | Description                                   |
 |-----------------------------------|-----------------------------------------------|
 | PaymentMethod::BANKAXESS          | Direct bank payments, Norway                  |
@@ -1625,5 +1632,5 @@ Used in usePaymentMethod($paymentMethod) and in usePayPage()->includePaymentMeth
 | PaymentMethod::SKRILL             | Card payment with Dankort, Skrill.            |
 | PaymentMethod::INVOICE            | Invoice by PayPage.                           |
 | PaymentMethod::PAYMENTPLAN        | PaymentPlan by PayPage.                       |
-
+```
 [<< To top](http://sveawebpay.github.io/php-integration#index)
