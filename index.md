@@ -261,7 +261,7 @@ $order->
         WebPayItem::individualCustomer()
         ->setNationalIdNumber(194605092222)
         ->setName("Tess", "Testson")
-        ->setStreetAddress("Gatan", 23)
+        ->setStreetAddress("Gatan 23")
         ->setZipCode(9999)
         ->setLocality("Stan")
         ...
@@ -725,7 +725,8 @@ $order->
             ->setInitials("SB")                 // required for individual customers in NL
             ->setBirthDate(1923, 12, 20)        // required for individual customers in NL and DE
             ->setName("Tess", "Testson")        // required for individual customers in NL and DE
-            ->setStreetAddress("Gatan", 23)     // required in NL and DE
+            ->setStreetAddress("Gatan 23")      // required for countries where housenumber is not required; housenumber will be null
+            ->setStreetAddress("Gatan", 23)     // required to specify housenumber in NL and DE
             ->setZipCode(9999)                  // required in NL and DE
             ->setLocality("Stan")               // required in NL and DE
             ->setEmail("test@svea.com")         // optional but desirable
@@ -751,7 +752,8 @@ $order->
             ->setNationalIdNumber(2345234)      // required in SE, NO, DK, FI
             ->setVatNumber("NL2345234")         // required in NL and DE
             ->setCompanyName("TestCompagniet")  // required in NL and DE
-            ->setStreetAddress("Gatan", 23)     // required in NL and DE
+            ->setStreetAddress("Gatan 23")      // required for countries where housenumber is not required; housenumber will be null
+            ->setStreetAddress("Gatan", 23)     // required to specify housenumber in NL and DE
             ->setZipCode(9999)                  // required in NL and DE
             ->setLocality("Stan")               // required in NL and DE
             ->setEmail("test@svea.com")         // optional but desirable
@@ -1458,44 +1460,45 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminS
 *example to come later*
 
 ### 7.6 WebPayAdmin::updateOrderRows() <a name="i76"></a>
-The `WebPayAdmin::updateOrderRows()` method is used to update individual order rows in non-delivered invoice and payment plan orders.
+The WebPayAdmin::updateOrderRows() method is used to update individual order rows in non-delivered invoice and 
+payment plan orders. Supports invoice and payment plan orders.
 
-For Invoice and Payment Plan orders, the order row status of the order is updated to reflect the added order rows. If the updated rows order total exceeds the original order total, an error is returned by the service.
+The order row status of the order is updated at Svea to reflect the updated order rows. If the updated rows' 
+order total amount exceeds the original order total amount, an error is returned by the service.
+
+Get an order builder instance using the WebPayAdmin::updateOrderRows() entrypoint, then provide more information 
+about the transaction and send the request using the UpdateOrderRowsBuilder methods:   
 
 Use setCountryCode() to specify the country code matching the original create order request.
 
-Use updateOrderRow() or updateOrderRows() to specify the order row(s) to update in the order. The supplied order row numbers must match order rows from the original createOrder request.
+Use updateOrderRow() with a new WebPayItem::numberedOrderRow() object to pass in the updated order row. Use the
+NumberedOrderRowBuilder member functions to specifiy the updated order row contents. Notably, the setRowNumber() 
+method specifies which original order row contents is to be replaced, in full, by the NumberedOrderRow contents. 
 
-Then use either updateInvoiceOrderRows() or updatePaymentPlanOrderRows(), which ever matches the payment method used in the original order request.
+Then use either updateInvoiceOrderRows() or updatePaymentPlanOrderRows() to get a request object, which ever 
+matches the payment method used in the original order.
 
-The final doRequest() will send the updateOrderRows request to Svea, and the resulting response code specifies the outcome of the request.
-
-#### 7.6.1 Usage
-Update order rows in a non-delivered invoice or payment plan order. (Card and Direct Bank orders are not supported.)
-
-Provide information about the updated order rows and send the request using updateOrderRowsBuilder methods:
+Calling doRequest() on the request object will send the request to Svea and return UpdateOrderRowsResponse.
 
 ```php
 <?php
 ...
-->setOrderId()
-->setCountryCode()
-->updateOrderRow() (one or more)
-->updateOrderRows() (optional)
+    $request = WebPayAdmin->updateOrderRows($config)
+        ->setOrderId()                  // required
+        ->setCountryCode()              // required
+        ->updateOrderRow()              // required, NumberedOrderRow w/RowNumber attribute matching row index of original order row
 
-Finish by selecting the correct ordertype and perform the request:
-->updateInvoiceOrderRows() | updatePaymentPlanOrderRows()
-  ->doRequest()
+    // then select the corresponding request class and send request
+    $response = $request->updateInvoiceOrderRows()->doRequest();     // returns UpdateOrderRowsResponse
+    $response = $request->updatePaymentPlanOrderRows()->doRequest(); // returns UpdateOrderRowsResponse
 ...
 ```
-
-The final doRequest() returns an UpdateOrderRowsResponse.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.UpdateOrderRowsBuilder.html" target="_blank">UpdateOrderRowsBuilder</a> method details.
 
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminService.UpdateOrderRowsResponse.html" target="_blank">UpdateOrderRowsResponse</a> for invoice and payment plan orders response.
 
-#### 7.6.2 Example
+#### 7.6.1 Example
 *example to come later*
 
 ### 7.7 WebPayAdmin::deliverOrderRows() <a name="i77"></a>
