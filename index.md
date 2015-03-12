@@ -724,7 +724,7 @@ Note that "required" below as a requirement only when using the invoice or payme
 ...
     IndividualCustomer individual = WebPayItem::individualCustomer()
         ->setNationalIdNumber() // Numeric	// invoice, paymentplan: required for customers in SE, NO, DK, FI
-        ->setName()       	// String	// invoice, paymentplan: required, use (firstname, lastname) for customers in NL and DE 
+        ->setName()             // String	// invoice, paymentplan: required, use (firstname, lastname) for customers in NL and DE 
         ->setBirthDate()        // Numeric	// invoice, paymentplan: required for individual customers in NL and DE
         ->setInitials()         // String	// invoice, paymentplan: required for individual customers in NL
         ->setCoAddress()      	// String	// invoice, paymentplan: optional
