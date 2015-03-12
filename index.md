@@ -713,58 +713,60 @@ Specify the discount using RelativeDiscount methods:
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.RelativeDiscount.html" target="_blank">RelativeDiscount</a> class methods for details on how to specify the item.
 
 ### 5.7 WebPayItem::individualCustomer() <a name="i57"></a>
-Read "required" below as a requirement only when the IndividualCustomer is used to identify the customer when using the invoice or payment plan payment methods. (For card and direct bank orders, adding customer information to the order is optional.)
+Use WebPayItem::individualCustomer() to add individual customer information to an order.
+
+Note that "required" below as a requirement only when using the invoice or payment plan payment methods, and that the required attributes vary between countries.
+
+(For card and direct bank orders, adding customer information to the order is optional, unless you're using getPaymentUrl() to set up a prepared payment.)
 
 ```php
 <?php
 ...
-$order->
-    addCustomerDetails(
-        WebPayItem::individualCustomer()
-            ->setNationalIdNumber(194605092222) // required for individual customers in SE, NO, DK, FI
-            ->setInitials("SB")                 // required for individual customers in NL
-            ->setBirthDate(1923, 12, 20)        // required for individual customers in NL and DE
-            ->setName("Tess", "Testson")        // required for individual customers in NL and DE
-            ->setStreetAddress("Gatan 23")      // required for countries where housenumber is not required; housenumber will be null
-            ->setStreetAddress("Gatan", 23)     // required to specify housenumber in NL and DE
-            ->setZipCode(9999)                  // required in NL and DE
-            ->setLocality("Stan")               // required in NL and DE
-            ->setEmail("test@svea.com")         // optional but desirable
-            ->setIpAddress("123.123.123")       // optional but desirable
-            ->setCoAddress("c/o Eriksson")      // optional
-            ->setPhoneNumber(999999)            // optional
-    )
-;
+    IndividualCustomer individual = WebPayItem::individualCustomer()
+        ->setNationalIdNumber() // Numeric	// invoice, paymentplan: required for customers in SE, NO, DK, FI
+        ->setName()       	// String	// invoice, paymentplan: required, use (firstname, lastname) for customers in NL and DE 
+        ->setBirthDate()        // Numeric	// invoice, paymentplan: required for individual customers in NL and DE
+        ->setInitials()         // String	// invoice, paymentplan: required for individual customers in NL
+        ->setCoAddress()      	// String	// invoice, paymentplan: optional
+        ->setStreetAddress()    // String	// invoice, paymentplan: required, use (street, housenumber) in NL and DE 
+        ->setZipCode)           // String	// invoice, paymentplan: required in NL and DE
+        ->setLocality()         // String	// invoice, paymentplan: required in NL and DE
+        ->setPhoneNumber()      // String	// invoice, paymentplan: optional but desirable
+        ->setEmail()         	// String	// invoice, paymentplan: optional but desirable
+        ->setIpAddress()       	// String	// invoice, paymentplan: optional but desirable; card: required for getPaymentUrl() orders only
+    ;
 ...
 ```
 
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.IndividualCustomer.html" target="_blank">IndividualCustomer</a> class methods for details on how to specify the item, including all *required* methods.
+See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.IndividualCustomer.html" target="_blank">IndividualCustomer</a> class methods for details on how to specify the item.
 
 ### 5.8 WebPayItem::companyCustomer() <a name="i58"></a>
-Read "required" below as a requirement only when the CompanyCustomer is used to identify the customer when using the invoice or payment plan payment methods. (For card and direct bank orders, adding customer information to the order is optional.)
+Use WebPayItem::companyCustomer() to add individual customer information to an order.
+
+Note that "required" below as a requirement only when using the invoice or payment plan payment methods, and that the required attributes vary etween countries.
+
+(For card and direct bank orders, adding customer information to the order is optional, unless you're using getPaymentUrl() to set up a prepared payment.)
 
 ```php
 <?php
 ...
-$order->
-    addCustomerDetails(
-        WebPayItem::companyCustomer()
-            ->setNationalIdNumber(2345234)      // required in SE, NO, DK, FI
-            ->setVatNumber("NL2345234")         // required in NL and DE
-            ->setCompanyName("TestCompagniet")  // required in NL and DE
-            ->setStreetAddress("Gatan 23")      // required for countries where housenumber is not required; housenumber will be null
-            ->setStreetAddress("Gatan", 23)     // required to specify housenumber in NL and DE
-            ->setZipCode(9999)                  // required in NL and DE
-            ->setLocality("Stan")               // required in NL and DE
-            ->setEmail("test@svea.com")         // optional but desirable
-            ->setIpAddress("123.123.123")       // optional but desirable
-            ->setCoAddress("c/o Eriksson")      // optional
-            ->setPhoneNumber(999999)            // optional
-            ->setAddressSelector("7fd7768")     // optional, string recieved from WebPay::getAddress() request
-    )
-;
+    CompanyCustomer company = WebPayItem::companyCustomer()()
+        ->setNationalIdNumber() // Numeric	// invoice: required for customers in SE, NO, DK, FI
+        ->setCompanyName()      // String	// invoice: required (companyname) for company customers in NL and DE 
+        ->setVatNumber()        // Numeric	// invoice: required for individual customers in NL and DE
+        ->setCoAddress()        // String	// invoice: optional
+        ->setStreetAddress()    // String	// invoice: required, use (street, housenumber) in NL and DE 
+        ->setZipCode)           // String	// invoice: required in NL and DE
+        ->setLocality()         // String	// invoice: required in NL and DE
+        ->setPhoneNumber()      // String	// invoice: optional but desirable
+        ->setEmail()            // String	// invoice: optional but desirable
+        ->setIpAddress()        // String	// invoice: optional but desirable; card: required for getPaymentUrl() orders only
+        ->setAddressSelector()  // String	// invoice: optional but recommended; received from WebPay::getAddresses() request response
+    ;
 ...
 ```
+
+See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.CompanyCustomer.html" target="_blank">CompanyCustomer</a> class methods for details on how to specify the item..
 
 ### 5.9 WebPayItem::numberedOrderRow() <a name="i59"></a>
 This is an extension of the orderRow class, used in the WebPayAdmin::queryOrder() response and methods that adminster individual order rows.
