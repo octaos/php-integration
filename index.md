@@ -715,6 +715,7 @@ See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Re
 ### 5.7 WebPayItem::individualCustomer() <a name="i57"></a>
 Use WebPayItem::individualCustomer() to add individual customer information to an order.
 
+#### 5.7.1 Using IndividualCustomer when specifying an order 
 Note that "required" below as a requirement only when using the invoice or payment plan payment methods, and that the required attributes vary between countries.
 
 (For card and direct bank orders, adding customer information to the order is optional, unless you're using getPaymentUrl() to set up a prepared payment.)
@@ -1015,26 +1016,18 @@ Example (cont. from 6.2.3.2):
 
 ### 6.3 WebPay::getAddresses() <a name="i63"></a>
 <!-- WebPay::getAddresses() docblock below, replace @see with apidoc links -->
-The WebPay::getAddresses() entrypoint is used to fetch a list validated addresses 
-associated with a given customer identity. This list can in turn be used to i.e. 
-verify that an order delivery address matches the invoice address used by Svea for 
-invoice and payment plan orders. Only applicable for SE, NO and DK customers. 
-Note that in Norway, company customers only are supported.
+The WebPay::getAddresses() entrypoint is used to fetch a list validated addresses associated with a given customer identity. This list can in turn be used to i.e. verify that an order delivery address matches the invoice address used by Svea for invoice and payment plan orders. Only applicable for SE, NO and DK customers. Note that in Norway, company customers only are supported.
 
-Get an request class instance using the WebPay::getAddresses entrypoint, then
-provide more information about the transaction and send the request using the
+Get an request class instance using the WebPay::getAddresses entrypoint, then provide more information about the transaction and send the request using the
 request class methods:
 
-Use setCountryCode() to supply the country code that corresponds to the account 
-credentials used for the address lookup. Note that this means that you cannot 
-look up a user in a foreign country, this is a consequence of the fact that the 
-invoice and partpayment methods don't support foreign orders.
+Use setCountryCode() to supply the country code that corresponds to the account credentials used for the address lookup. Note that this means that you cannot look up a user in a foreign country, this is a consequence of the fact that the invoice and partpayment methods don't support foreign orders.
 
 Use setCustomerIdentifier() to provide the exact credentials needed to identify 
 the customer according to country:
-     SE: Personnummer (private individual) or Organisationsnummer (company/legal entity)
-     NO: Organisasjonsnummer (company or other legal entity)
-     DK: Cpr.nr (private individual) or CVR-nummer (company or other legal entity)
+    * SE: Personnummer (private individual) or Organisationsnummer (company/legal entity)
+    * NO: Organisasjonsnummer (company or other legal entity)
+    * DK: Cpr.nr (private individual) or CVR-nummer (company or other legal entity)
 
 Then use either getIndividualAddresses() or getCompanyAddresses() depending on what kind of customer you want to look up.
  
@@ -1042,22 +1035,20 @@ The final doRequest() will send the getAddresses request to Svea and return the 
 
 The doRequest() method will then check if there exists credentials to use for the request in the given configurationProvider.
 
-(Note that this behaviour may cause problems if your integration is set to use different (test/production) credentials 
-for invoice and payment plan -- if you get an error and this is the case, you may use one of the deprecated methods 
-setOrderTypeInvoice() or setOrderTupePaymentPlan() to explicity state which method credentials to use.)
+(Note that this behaviour may cause problems if your integration is set to use different (test/production) credentials for invoice and payment plan -- if you get an error and this is the case, you may use one of the deprecated methods setOrderTypeInvoice() or setOrderTupePaymentPlan() to explicity state which method credentials to use.)
 
 ```php
 <?php
 ...
-       $request = WebPay::getAddresses($config)
-           ->setCountryCode()                  // required -- the country to perform the customer address lookup in
-           ->setCustomerIdentifier()           // required -- social security number, company vat number etc. used to identify customer
-           ->setOrderTypeInvoice()             // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
-           ->setOrderTypePaymentPlan()         // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
-       ;
-       // then select the corresponding request class and send request
-      $response = $request->getIndividualAddresses()->doRequest();    // returns GetAddressesResponse
-      $response = $request->getCompanyAddresses()->doRequest();       // returns GetAddressesResponse
+        $request = WebPay::getAddresses($config)
+            ->setCountryCode()                  // required -- the country to perform the customer address lookup in
+            ->setCustomerIdentifier()           // required -- social security number, company vat number etc. used to identify customer
+            ->setOrderTypeInvoice()             // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
+            ->setOrderTypePaymentPlan()         // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
+        ;
+        // then select the corresponding request class and send request
+        $response = $request->getIndividualAddresses()->doRequest();    // returns GetAddressesResponse
+        $response = $request->getCompanyAddresses()->doRequest();       // returns GetAddressesResponse
 ```
 
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.GetAddresses.html" target="_blank">GetAddresses</a> class.
@@ -1065,43 +1056,51 @@ See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.We
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.WebService.GetAddressesResponse.html" target="_blank">GetAddressesResponse</a> class.
 
 #### 6.3.1 getAddresses response format
-<!-- GetAddresses class docblock below -->
-Returns an array of all the associated addresses for a given customer identity. Each address has an AddressSelector attribute that uniquely identifies the address.
-
-The GetAddresses service is only applicable for SE, NO and DK customers and accounts. In Norway, GetAddresses may only be performed on company customers.
-
-Use setCountryCode() to supply the country code that corresponds to the account credentials used for the address lookup. Note that this means that you cannot look up a user in a foreign country, this is a consequence of the fact that the invoice and partpayment methods don't support foreign orders.
-
-Use setCustomerIdentifier() to provide the exact credentials needed to identify the customer according to country:
-* SE: Personnummer (private individual) or Organisationsnummer (company or other legal entity)
-* NO: Organisasjonsnummer (company or other legal entity)
-* DK: Cpr.nr (private individual) or CVR-nummer (company or other legal entity)
-
-Then use either getIndividualAddresses() or getCompanyAddresses() depending on what kind of customer you want to look up.
-
-The final doRequest() will send the getAddresses request to Svea and return the result.
-
-The following methods are deprecated starting with 2.2 of the package:
+The Webpay::getAddresses request returns an instance of GetAddressesResponse, containing the actual customer addresses in an array of GetAddressIdentity:
 
 ```php
 <?php
 ...
-->setIndividual()                    (deprecated, -- lookup the address of a private individual, set to i.e. social security number)
-->setCompany()                       (deprecated -- lookup the addresses associated with a legal entity (i.e. company)
-->setOrderTypeInvoice()              (deprecated -- supply the method that corresponds to the account credentials used for the address lookup)
-->setOrderTypePaymentPlan()          (deprecated -- supply the method that corresponds to the account credentials used for the address lookup)
+        $myGetAddressResponse = WebPay::getAddresses($myConfig);
+
+        // GetAddressResponse attributes:
+        $myGetAddressResponse->accepted;            // Boolean  // true iff request was accepted
+        $myGetAddressResponse->resultcode;          // String   // set iff accepted false
+        $myGetAddressResponse->errormessage;        // String   // set iff accepted false
+        $myGetAddressResponse->customerIdentity;    // Array of GetAddressIdentity
+
+        $firstCustomerAddress = $myGetAddressesResponse->customerIdentity[0];
+       
+        // GetAddressIdentity attributes:
+        $firstCustomerAddress->customerType;        // String   // "Person" or "Business" for individual and company customers, respectively
+        $firstCustomerAddress->nationalIdNumber;    // Numeric  // national id number of individual or company 
+        $firstCustomerAddress->fullName;            // String   // amalgated firstname and surname for indivdual, or company name for company customers
+        $firstCustomerAddress->coAddress;           // String   // optional
+        $firstCustomerAddress->street;              // String   // required, streetname including housenumber
+        $firstCustomerAddress->zipCode;             // String   // required
+        firstCustomerAddress->locality;             // String   // required, city name
+        $firstCustomerAddress->phoneNumber;         // String   // optional
+        $firstCustomerAddress->firstName;           // String   // optional, present in GetAddressResponse, not returned in CreateOrderResponse
+        $firstCustomerAddress->lastName;            // String   // optional, present in GetAddressResponse, not returned in CreateOrderResponse
+        $firstCustomerAddress->addressSelector      // String   // optional, uniquely disambiguates company addresses      
 ...
 ```
+
+If defined, the customer `fullName` method will contain the amalgated customer firstname and surname as returned by the various credit providers we use in the respective country. Unfortunately, there is no way of knowing the exact format of the amalgated name; i.e. "Joan Doe", "Joan, Doe", "Doe, Joan". 
 
 #### 6.3.2 getAddresses request example (new style)
 ```php
 <?php
-$response = WebPay::getAddresses( $config )
-    ->setCountryCode("SE")                  // Required -- supply the country code that corresponds to the account credentials used
-    ->setCustomerIdentifier("194605092222") // Required -- SE individual requires a "personnummer"
-    ->getIndividualAddresses()              // Required -- lookup the address of a private individual
-       ->doRequest();                       // Will make a best effort to use whichever is available of invoice or partpayment credentials
-;
+    $request = WebPay::getAddresses($config)
+        ->setCountryCode()                  // required -- the country to perform the customer address lookup in
+        ->setCustomerIdentifier()           // required -- social security number, company vat number etc. used to identify customer
+        ->setOrderTypeInvoice()             // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
+        ->setOrderTypePaymentPlan()         // deprecated -- method that corresponds to the ConfigurationProvider account credentials used 
+    ;
+    // then select the corresponding request class and send request
+    $response = $request->getIndividualAddresses()->doRequest();    // returns GetAddressesResponse
+    $response = $request->getCompanyAddresses()->doRequest();       // returns GetAddressesResponse
+
 ```
 
 #### 6.3.3 getAddresses request example (old style, deprecated)
