@@ -1078,7 +1078,7 @@ The Webpay::getAddresses request returns an instance of GetAddressesResponse, co
         $firstCustomerAddress->coAddress;           // String   // optional
         $firstCustomerAddress->street;              // String   // required, streetname including housenumber
         $firstCustomerAddress->zipCode;             // String   // required
-        firstCustomerAddress->locality;             // String   // required, city name
+        $firstCustomerAddress->locality;            // String   // required, city name
         $firstCustomerAddress->phoneNumber;         // String   // optional
         $firstCustomerAddress->firstName;           // String   // optional, present in GetAddressResponse, not returned in CreateOrderResponse
         $firstCustomerAddress->lastName;            // String   // optional, present in GetAddressResponse, not returned in CreateOrderResponse
