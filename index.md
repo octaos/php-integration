@@ -559,7 +559,20 @@ An example of an recurring card order, both the setup transaction and a recurrin
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
 ## 5. WebPayItem reference <a name="i5"></a>
+<!-- WebPayItem docbloc below, replace @see with apidoc links -->
 The WebPayItem class provides entrypoint methods to the different row items that make up an order, as well as the customer identity information items.
+
+An order must contain one or more order rows. You may add invoice fees, shipping fees and discounts to an order.
+
+Note that while it is possible to add multiples of fee and discount rows, the package will group rows according to type before sending them to Svea:
+
+    1. all order rows, in the order they were added using addOrderRow()
+    2. any shipping fee rows, in the order they were added using addShippingFee()
+    3. any invoice fee rows, in the order they were added using addShippingFee()
+    4. any fixed discount rows, in the order they were added using addFixedDiscount()
+    5. any relative discount rows, in the order they were added using addRelativeDiscount()
+
+Also, for relative discounts, or fixed discounts specified using only setAmountIncVat() or only setAmountExVat() there may be several discount rows added, should the order include more than one different vat rate. It is not recommended to specify more than one relative discount row per order, or more than one fixed discount specified using only setAmountIncVat() or only setAmountExVat().
 
 See the <a href="http://sveawebpay.github.io/php-integration/api/classes/WebPayItem.html" target="_blank">WebPayItem</a> class for available order row items.
 
