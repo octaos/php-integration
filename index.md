@@ -118,6 +118,9 @@ The WebPay and WebPayAdmin entrypoint methods all require a config object when c
 
 In order to use your own account credentials, either edit the SveaConfig.php file with your actual account credentials, or implement the ConfigurationProvider interface in a class of your own -- your implementation could for instance fetch the needed credentials from a database in place of the SveaConfig.php file.
 
+### 1.5 Additional integration properties configuration
+You should also add information about your integration platform (i.e. Magento, OpenCart, or MyAwesomeEcommerceSystem etc.), platform version and providing company. See ConfigurationProvider getIntegrationPlatform(), getIntegrationVersion() and getIntegrationCompany() methods, or the SveaConfig integrationproperties array. When configured, the integration properties information will be passed to Svea alongside the various service requests.
+
 See the provided example of how to customise the SveaConfig.php in the <a href="http://github.com/sveawebpay/php-integration/blob/master/example/config_getaddresses/" target="_blank">example/config_getaddresses/</a> folder.
 
 See further the <a href="http://sveawebpay.github.io/php-integration/api/classes/ConfigurationProvider.html" target="_blank">ConfigurationProvider</a> interface and the provided <a href="http://github.com/sveawebpay/php-integration/blob/master/src/Config/SveaConfig.php" target="_blank">SveaConfig.php example file</a>.
