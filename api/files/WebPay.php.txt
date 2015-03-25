@@ -34,11 +34,6 @@ The WebPay and WebPayAdmin entrypoint methods are built as a fluent API so you c
 
 ### Development environment
 The Svea WebPay PHP integration package is developed and tested using NetBeans IDE 7.3.1 with the phpunit 3.7.24 plugin.
- *
- * @api
- * @version 2.2.4
- * @package WebPay
- *
  * @author Anneli Halld'n, Daniel Brolund, Kristian Grossman-Madsen for Svea WebPay
  */
 class WebPay {
@@ -111,7 +106,7 @@ class WebPay {
      * 
      *      $request = WebPay::deliverOrder($config)
      *          ->setOrderId()                  // invoice or payment plan only, required
-     *          ->setTransactionId()            // card only, optional -- you can also use setOrderId
+     *          ->setTransactionId()            // card only, optional, alias for setOrderId 
      *          ->setCountryCode()              // required
      *          ->setInvoiceDistributionType()  // invoice only, required
      *          ->setNumberOfCreditDays()       // invoice only, optional
@@ -180,7 +175,7 @@ class WebPay {
      *      // then select the corresponding request class and send request
      *      $response = $request->getIndividualAddresses()->doRequest();    // returns GetAddressesResponse
      *      $response = $request->getCompanyAddresses()->doRequest();       // returns GetAddressesResponse
-     *
+     * 
      * @see Svea\WebService\GetAddresses Svea\WebService\GetAddresses
      * @return Svea\WebService\GetAddressesResponse Svea\WebService\GetAddressesResponse
      * @param ConfigurationProvider $config  instance implementing ConfigurationProvider Interface
