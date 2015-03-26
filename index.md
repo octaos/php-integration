@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.15
+## Version 2.2.16
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
