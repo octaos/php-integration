@@ -55,7 +55,7 @@ layout: index
     * [8.2. Response accepted and result code](http://sveawebpay.github.io/php-integration#i82)
 * [9. Additional Developer Resources and notes](http://sveawebpay.github.io/php-integration#i9)
     * [9.1 Helper class methods](http://sveawebpay.github.io/php-integration#i91)
-    * [9.2 Inspect prepareRequest(), validateOrder() methods](http://sveawebpay.github.io/php-integration#i92)
+    * [9.2 Request validateOrder(), prepareRequest(), getRequestTotal() methods](http://sveawebpay.github.io/php-integration#i92)
 * [10. Frequently Asked Questions](http://sveawebpay.github.io/php-integration#i10)
     * [10.1 Supported currencies](http://sveawebpay.github.io/php-integration#i101)
 
@@ -1596,12 +1596,14 @@ See the respective response classes for further information on response attribut
 ### 9.1 Helper class methods <a name="i91"></a>
 In the Helper class we make available helper functions for i.e. bankers rounding, splitting a sum with an arbitrary tax rate over two fixed tax rates, as well as splitting street addresses into streetname and housenumber. See the Helper class definition for further information.
 
-### 9.2 Inspect prepareRequest(), validateOrder() methods <a name="i92"></a>
+### 9.2 Request validateOrder(), prepareRequest(), getRequestTotal() methods <a name="i92"></a>
 During module development or debugging, the `prepareRequest()` method may be of use as an alternative to `doRequest()` as the final step in the createOrder process.
 
-`prepareRequest()` will do everything `doRequest()` does, but does not send the SOAP request to Svea. Call `prepareRequest()` and then inspect the contents of the request to be sent to Svea. The
+The `prepareRequest()` method will do everything `doRequest()` does, except send the SOAP request to Svea -- instead it returns an inspectable object containing the data that will be sent in the doRequest call. The output of prepareRequest is also used internally by the doRequest method. To use, simply substitute `prepareRequest()` for the final `doRequest()` and then inspect the contents of the returned object.
 
-`validateOrder()` validates that all required attributes are present in an order object, give the specific combination of country and payment method. It returns an array containing any discovered errors.
+The `validateOrder()` method validates that all required attributes are present in an order object, give the specific combination of country and chosen payment method, it returns an array containing any discovered errors. 
+
+If you find yourself in need of knowing what the order total at Svea will amount to before sending the request, you can use the `getRequestTotals()` method to get the amount including vat, amount excluding vat and total vat amount. 
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
