@@ -1666,7 +1666,7 @@ The correct way to do this is to send the order using the total amount incl. vat
     $order = WebPay::createOrder($config)
                 ->addOrderRow(
                     WebPayItem::orderRow()
-                        ->setAmountIncVat(1400.00)
+                        ->setAmountIncVat(1400.26)
                         ->setVatPercent(6)
                         ->setQuantity(1)
                 )
