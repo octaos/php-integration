@@ -55,7 +55,7 @@ layout: index
     * [8.2. Response accepted and result code](http://sveawebpay.github.io/php-integration#i82)
 * [9. Additional Developer Resources and notes](http://sveawebpay.github.io/php-integration#i9)
     * [9.1 Helper class methods](http://sveawebpay.github.io/php-integration#i91)
-    * [9.2 Request validateOrder(), prepareRequest(), getRequestTotal() methods](http://sveawebpay.github.io/php-integration#i92)
+    * [9.2 Request validateOrder(), prepareRequest(), getRequestTotals() methods](http://sveawebpay.github.io/php-integration#i92)
 * [10. Frequently Asked Questions](http://sveawebpay.github.io/php-integration#i10)
     * [10.1 Supported currencies](http://sveawebpay.github.io/php-integration#i101)
 
@@ -1596,14 +1596,98 @@ See the respective response classes for further information on response attribut
 ### 9.1 Helper class methods <a name="i91"></a>
 In the Helper class we make available helper functions for i.e. bankers rounding, splitting a sum with an arbitrary tax rate over two fixed tax rates, as well as splitting street addresses into streetname and housenumber. See the Helper class definition for further information.
 
-### 9.2 Request validateOrder(), prepareRequest(), getRequestTotal() methods <a name="i92"></a>
-During module development or debugging, the `prepareRequest()` method may be of use as an alternative to `doRequest()` as the final step in the createOrder process.
+### 9.2 Request validateOrder(), prepareRequest(), getRequestTotals() methods <a name="i92"></a>
+During module development or debugging, various informational methods may be of use as an alternative to `doRequest()` as the final step in the createOrder process in order to get more information about the actual request data that will be sent to Svea.
 
+#### 9.2.1 prepareRequest()
 The `prepareRequest()` method will do everything `doRequest()` does, except send the SOAP request to Svea -- instead it returns an inspectable object containing the data that will be sent in the doRequest call. The output of prepareRequest is also used internally by the doRequest method. To use, simply substitute `prepareRequest()` for the final `doRequest()` and then inspect the contents of the returned object.
 
+#### 9.2.2 validateOrder()
 The `validateOrder()` method validates that all required attributes are present in an order object, give the specific combination of country and chosen payment method, it returns an array containing any discovered errors. 
 
+#### 9.2.3 getRequestTotals()
 If you find yourself in need of knowing what the order total at Svea will amount to before sending the request, you can use the `getRequestTotals()` method to get the amount including vat, amount excluding vat and total vat amount. 
+
+For example, if your integration only handles integer order amounts, you may have to supply a compensation row with the order to ensure that the invoiced order total amount in Svea's system match your integration order totals:
+
+Your integration has the following order totals (in integers only) for an order containing one item:
+1 item at cost 1400 kr inclusive of 6% vat (i.e. 1321 kr excl vat, 79 kr vat in your system)
+
+The order row is specified using the following code, and then sent to Svea
+
+```php
+<?php>
+    $order = WebPay::createOrder($config)
+                ->addOrderRow(
+                    WebPayItem::orderRow()
+                        ->setAmountIncVat(1400.00)
+                        ->setVatPercent(6)
+                        ->setQuantity(1)
+                )
+                ...
+    $response = $order->useInvoicePayment->doRequest();
+```
+
+As Svea always re-calculate an order to a sum and a vat percentage, this order will be represented in Svea backoffice as:
+
+```
+Price (excl. VAT)   Price (incl. VAT)	Totalt netto	VAT%	Sum (incl. VAT)
+1320,75             1400.00             1320,75  	6.00	1400,00 
+                                        -------         -----   -------
+                                        1320,75         79,25	1400,00
+```
+
+If we try to make up the difference by adding a compensation (i.e. discount row):
+
+```php
+<?php>
+        $order->addDiscount( WebPayItem::fixedDiscount()
+                                ->setAmountIncVat(-0.25)    // a negative discount shows up as a positive adjustment
+                                ->setVatPercent(0)
+                            )
+                ...
+```
+
+it will show up as
+
+```
+Price (excl. VAT)   Price (incl. VAT)	Totalt netto	VAT%	Sum (incl. VAT)
+1320,75             1400.00             1320,75  	6.00	1400,00 
+0,25                0,25                0,25            0.00    0,25
+                                        -------         -----   -------
+                                        1321,00         79,25	1400,25
+```
+Which is not what we want.
+
+The correct way to do this is to send the order using the total amount incl. vat calculated from the item price ex. vat, and then add a discount row, that way the item row amount ex. vat and vat amount is correct, as well as the total amount charged to the customer:
+
+```php
+<?php>
+    $order = WebPay::createOrder($config)
+                ->addOrderRow(
+                    WebPayItem::orderRow()
+                        ->setAmountIncVat(1400.00)
+                        ->setVatPercent(6)
+                        ->setQuantity(1)
+                )
+                ->addDiscount( WebPayItem::fixedDiscount()
+                                ->setAmountIncVat(-0.26)
+                                ->setVatPercent(0)
+                            )
+                ...
+```
+
+which will show up as
+
+```
+Price (excl. VAT)   Price (incl. VAT)	Totalt netto	VAT%	Sum (incl. VAT)
+1321,00             1400,26             1321,00  	 6.00	1400,26 
+-0,26               -0,26               -0,26            0.00   -0,26
+                                        -------         -----   -------
+                                        1320,74         79,26	1400,00
+```
+
+Which is about as exact as we can get. (Unfortunately there is no way to introduce a discount of vat only, as you need to pay vat on the entire 1321 kr, regardless on the total amount actually charged to the customer.)
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
@@ -1635,6 +1719,13 @@ For invoice and part payment, the order amount is assumed to be made out in the 
 **A**: When you sign up with Svea you will be provided with a merchant id which is used for all hosted payment methods. For a merchant id, one or more payment methods may be enabled, such as credit cards, direct bank payments using various banks, PayPal etc. 
 
 To enable a new payment method, your merchant will need to be configured with various credentials as requested by Svea. Please ask your Svea integration manager for more information on what exact credentials are needed.
+
+### 10.3 My store order totals does not match the order totals in Svea's systems
+**Q**: The order row sums and totals in my ecommerce platform does not match the ones in Svea's backoffice and/or on the invoice?
+
+**A**: Unfortunately this may happen, primarily when using the invoice payment method, and may be due to a couple of different reasons, the main culprit being how prices are represented internally by your integration (i.e. store/ecommerce platform). If the way that the integration i.e. sums up the order totals (rounding after each row or of the total amounts, quantity applied before/after tax et al) differs from the way Svea does the invoice calculation, the order totals may not match between the systems. 
+
+Should this be the case, and you are unable to tweak the platform settings to match, we recommend that you use the getOrderTotals function as described in section 9.2.3 to add a compensation row to the order.
 
 ## APPENDIX <a name="appendix"></a>
 
