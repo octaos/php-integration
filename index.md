@@ -1632,7 +1632,7 @@ As Svea always re-calculate an order to a sum and a vat percentage, this order w
 
 ```
 Price (excl. VAT)   Price (incl. VAT)	Totalt netto	VAT%	Sum (incl. VAT)
-1320,75             1400.00             1320,75  	6.00	1400,00 
+1320,75             1400.00             1320,75          6.00	1400,00 
                                         -------         -----   -------
                                         1320,75         79,25	1400,00
 ```
@@ -1652,8 +1652,8 @@ it will show up as
 
 ```
 Price (excl. VAT)   Price (incl. VAT)	Totalt netto	VAT%	Sum (incl. VAT)
-1320,75             1400.00             1320,75  	6.00	1400,00 
-0,25                0,25                0,25            0.00    0,25
+1320,75             1400.00             1320,75          6.00	1400,00 
+0,25                0,25                0,25             0.00   0,25
                                         -------         -----   -------
                                         1321,00         79,25	1400,25
 ```
