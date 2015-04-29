@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.18
+## Version 2.2.19
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
@@ -1596,7 +1596,7 @@ See the respective response classes for further information on response attribut
 ## 9. Additional Developer Resources and notes <a name="i9"></a>
 
 ### 9.1 Helper class methods <a name="i91"></a>
-In the Helper class we make available helper functions for i.e. bankers rounding, splitting a sum with an arbitrary tax rate over two fixed tax rates, as well as splitting street addresses into streetname and housenumber. See the Helper class definition for further information.
+In the Helper class we make available helper functions for i.e. bankers rounding, getting the different tax rates present in an order object, dividing an order row with an arbitrary mean tax rate across one or two new order rows with given tax rates, as well as splitting street addresses into streetname and housenumber. See the Helper class definition for further information.
 
 ### 9.2 Request validateOrder(), prepareRequest(), getRequestTotals() methods <a name="i92"></a>
 During module development or debugging, various informational methods may be of use as an alternative to `doRequest()` as the final step in the createOrder process in order to get more information about the actual request data that will be sent to Svea.
