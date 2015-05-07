@@ -53,8 +53,8 @@ layout: index
 * [8. SveaResponse](http://sveawebpay.github.io/php-integration#i8)
     * [8.1. Parsing an asynchronous service response](http://sveawebpay.github.io/php-integration#i81)
     * [8.2. Response accepted and result code](http://sveawebpay.github.io/php-integration#i82)
-* [9. Additional Developer Resources and notes](http://sveawebpay.github.io/php-integration#i9)
-    * [9.1 Helper class methods](http://sveawebpay.github.io/php-integration#i91)
+* [9. Helper Class and Additional Developer Resources and Notes](http://sveawebpay.github.io/php-integration#i9)
+    * [9.1 Helper::paymentPlanPricePerMonth()](http://sveawebpay.github.io/php-integration#i91)
     * [9.2 Request validateOrder(), prepareRequest(), getRequestTotals() methods](http://sveawebpay.github.io/php-integration#i92)
 * [10. Frequently Asked Questions](http://sveawebpay.github.io/php-integration#i10)
     * [10.1 Supported currencies](http://sveawebpay.github.io/php-integration#i101)
@@ -1593,10 +1593,26 @@ See the respective response classes for further information on response attribut
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
-## 9. Additional Developer Resources and notes <a name="i9"></a>
-
-### 9.1 Helper class methods <a name="i91"></a>
+## 9. Helper Class and Additional Developer Resources and Notes <a name="i9"></a>
 In the Helper class we make available helper functions for i.e. bankers rounding, getting the different tax rates present in an order object, dividing an order row with an arbitrary mean tax rate across one or two new order rows with given tax rates, as well as splitting street addresses into streetname and housenumber. See the Helper class definition for further information.
+
+### 9.1 Helper::paymentPlanPricePerMonth() <a name="i91"></a>
+This is a helper function provided to calculate the monthly price for the different payment plan options for a given sum. This information may be used when displaying i.e. payment options to the customer by checkout, or to display the lowest amount due per month to display on a product level.
+
+If the ignoreMaxAndMinFlag is set to true, the returned array also contains the theoretical monthly installments for a given amount, even if the campaign may not actually be available to use in a payment request, should the amount fall outside of the actual campaign min/max limit. If the flag is set to false or left out, the values array will not include such amounts, which may result in an empty values array in the result.
+
+```php
+<?php
+...
+    $paymentPlanParams = WebPay::getPaymentPlanParams($config)->setCountryCode("SE")->doRequest(); 
+
+    $response = Helper::paymentPlanPricePerMonth($amount, $paymentPlanParams, $ignoreMaxAndMinFlag = false);    // returns PaymentPlanPricePerMonth
+
+    $firstCampaign = $response->values[0]['campaignCode'];                      // i.e. [campaignCode] => 310012
+    $firstCampaignDescription = $response->values[0]['description'];            // i.e. [description] => Dela upp betalningen på 12 månader (räntefritt)
+    $pricePerMonthForFirstCampaign = $response->values[0]['pricePerMonth'];     // i.e. [pricePerMonth] => 201.66666666667
+...
+```
 
 ### 9.2 Request validateOrder(), prepareRequest(), getRequestTotals() methods <a name="i92"></a>
 During module development or debugging, various informational methods may be of use as an alternative to `doRequest()` as the final step in the createOrder process in order to get more information about the actual request data that will be sent to Svea.
