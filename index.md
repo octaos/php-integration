@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.21
+## Version 2.2.22
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
@@ -753,11 +753,10 @@ Note that "required" below as a requirement only when using the invoice or payme
         ->setPhoneNumber()      // String	// invoice, paymentplan: optional but desirable
         ->setEmail()         	// String	// invoice, paymentplan: optional but desirable
         ->setIpAddress()       	// String	// invoice, paymentplan: optional but desirable; card: required for getPaymentUrl() orders only
+        ->setPublicKey()        // String       // invoice, paymentplan: optional; identifier for selecting a specific pre-approved address
     ;
 ...
 ```
-
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.IndividualCustomer.html" target="_blank">IndividualCustomer</a> class methods for details on how to specify the item.
 
 ### 5.8 WebPayItem::companyCustomer() <a name="i58"></a>
 Use WebPayItem::companyCustomer() to add individual customer information to an order.
@@ -781,11 +780,10 @@ Note that "required" below as a requirement only when using the invoice or payme
         ->setEmail()            // String	// invoice: optional but desirable
         ->setIpAddress()        // String	// invoice: optional but desirable; card: required for getPaymentUrl() orders only
         ->setAddressSelector()  // String	// invoice: optional but recommended; received from WebPay::getAddresses() request response
+        ->setPublicKey()        // String       // invoice, paymentplan: optional; identifier for selecting a specific pre-approved address
     ;
 ...
 ```
-
-See the <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.CompanyCustomer.html" target="_blank">CompanyCustomer</a> class methods for details on how to specify the item..
 
 ### 5.9 WebPayItem::numberedOrderRow() <a name="i59"></a>
 This is an extension of the orderRow class, used in the WebPayAdmin::queryOrder() response and methods that adminster individual order rows.
