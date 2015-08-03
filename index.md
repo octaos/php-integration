@@ -55,7 +55,7 @@ layout: index
     * [8.2. Response accepted and result code](http://sveawebpay.github.io/php-integration#i82)
 * [9. Additional Developer Resources and notes](http://sveawebpay.github.io/php-integration#i9)
     * [9.1 Helper class methods](http://sveawebpay.github.io/php-integration#i91)
-    * [9.2 Inspect prepareRequest(), validateOrder() methods](http://sveawebpay.github.io/php-integration#i92)
+    * [9.2 Inspect prepareRequest(), getRequestTotal(), validateOrder() methods](http://sveawebpay.github.io/php-integration#i92)
 * [10. Frequently Asked Questions](http://sveawebpay.github.io/php-integration#i10)
     * [10.1 Supported currencies](http://sveawebpay.github.io/php-integration#i101)
 
@@ -335,9 +335,9 @@ The service response received is sent as an XML message, use the SveaResponse re
 
 >You can go by *PayPage* and choose to show all your payments here, or modify to exclude or include one or more payments. Use `->usePayPage()` where you can custom your own *PayPage*. This introduces an additional step in the customer checkout flow, though. Note also that Invoice and Payment plan payments will return an asynchronous when used from PayPage.
 
-*I wish to prepare an order and receive a link that I can mail to a customer, who then will complete the order payment using their card.*
+*I wish to prepare an order and receive a link that I can mail to a customer, who then will complete the order payment using their card. (url is valid up to one hour)*
 
->Create and build the order, then select the card payment method with the `->usePaymentMethod()`, but instead of getting a form with `->getPaymentForm()`, use `->getPaymentUrl()` to get an url to present to the user.
+>Create and build the order, then select the card payment method with the `->usePaymentMethod()`, but instead of getting a form for sending the customer to Webpay through HTTP POST with `->getPaymentForm()`, use `->getPaymentUrl()` to get an prepared url to send the customer to WebPay through a HTTP GET.
 
 *I wish to set up a subscription using recurring card payments, which will renew each month without further end user interaction.*
 
@@ -426,7 +426,7 @@ $form = $order
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.PaymentForm.html" target="_blank">PaymentForm</a> class for for form methods and attributes.
 
 #### 4.3.2 ->getPaymentUrl()
-Get an url containing a link to the prepared payment. To get a payment url you need to supply the customer ip address and language in the order request.
+Get an url containing a link to the prepared payment. A preparedpayment is valid up to one hour after creation. To get a payment url you need to supply the customer ip address and language in the order request.
 
 ```php
 <?php
@@ -730,6 +730,7 @@ $order->
             ->setIpAddress("123.123.123")       // optional but desirable
             ->setCoAddress("c/o Eriksson")      // optional
             ->setPhoneNumber(999999)            // optional
+            ->setPublicKey("ac0f2573b58ff523")  // optional, identifier for selecting a specific pre-approved address
     )
 ;
 ...
@@ -757,6 +758,7 @@ $order->
             ->setCoAddress("c/o Eriksson")      // optional
             ->setPhoneNumber(999999)            // optional
             ->setAddressSelector("7fd7768")     // optional, string recieved from WebPay::getAddress() request
+            ->setPublicKey("ac0f2573b58ff523")  // optional, identifier for selecting a specific pre-approved address
     )
 ;
 ...
@@ -1608,12 +1610,14 @@ See the respective response classes for further information on response attribut
 ### 9.1 Helper class methods <a name="i91"></a>
 In the Helper class we make available helper functions for i.e. bankers rounding, splitting a sum with an arbitrary tax rate over two fixed tax rates, as well as splitting street addresses into streetname and housenumber. See the Helper class definition for further information.
 
-### 9.2 Inspect prepareRequest(), validateOrder() methods <a name="i92"></a>
+### 9.2 Inspect prepareRequest(), getRequestTotal(), validateOrder() methods <a name="i92"></a>
 During module development or debugging, the `prepareRequest()` method may be of use as an alternative to `doRequest()` as the final step in the createOrder process.
 
 `prepareRequest()` will do everything `doRequest()` does, but does not send the SOAP request to Svea. Call `prepareRequest()` and then inspect the contents of the request to be sent to Svea. The
 
 `validateOrder()` validates that all required attributes are present in an order object, give the specific combination of country and payment method. It returns an array containing any discovered errors.
+
+`getRequestTotal()` for webservice requests returns the sums calculated for the orderrows as it will be handled in our systems. Returns an array with total_exvat, total_incvat and total_vat.
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
 
