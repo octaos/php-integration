@@ -447,7 +447,7 @@ $form = $order
     ->usePaymentMethod(PaymentMethod::KORTCERT)             // Card payment, get available providers using WebPay::listPaymentMethods()
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
-        ->setCardPageLanguage("se")                         // Required, languageCode As ISO639, eg. "en", default english
+        ->setCardPageLanguage("sv")                         // Required, languageCode As ISO639, eg. "en", default english
         ->getPaymentUrl();
 ...
 ```
@@ -471,7 +471,7 @@ $form = $order
     ->usePaymentMethod(PaymentMethod::NORDEA_SE)            // Direct bank payment, get available banks using WebPay::listPaymentMethods()
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
-        ->setCardPageLanguage("se")                         // Optional, languageCode As ISO639, eg. "en", default english
+        ->setCardPageLanguage("sv")                         // Optional, languageCode As ISO639, eg. "en", default english
         ->getPaymentForm();
 ...
 ```
@@ -490,7 +490,7 @@ $form = $order
     ->usePaymentMethod(PaymentMethod::KORTCERT)             // Use WebPay::listPaymentMethods() to get available payment methods
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
-        ->setCardPageLanguage("se")                         // Optional, languageCode As ISO639, eg. "en", default english
+        ->setCardPageLanguage("sv")                         // Optional, languageCode As ISO639, eg. "en", default english
         ->getPaymentForm();
 ...
 ```
