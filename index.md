@@ -283,7 +283,7 @@ Set any additional attributes needed to complete the order using the OrderBuilde
 ...
 $order
     ...
-    ->setCountryCode("SE")                  // required
+    ->setCountryCode("SE")                  // required* Optional for hosted payments when using implementation of ConfigurationProvider Interface
     ->setCurrency("SEK")                    // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
     ->setClientOrderNumber("A123456")       // required for card payment, direct payment, PaymentMethod & PayPage payments, max length 30 chars.
     ->setCustomerReference("att: kgm")      // optional, ignored for card & direct bank orders, max length 30 chars.
@@ -367,7 +367,7 @@ $order = WebPay::createOrder($config);
 $order
     ->addOrderRow( ...                      // required, one or more
     ->addCustomerDetails( ...               // required, individualCustomer or companyCustomer
-    ->setCountryCode("SE")                  // required
+    ->setCountryCode("SE")                  // required* Optional for hosted payments when using implementation of ConfigurationProvider Interface
     ->setOrderDate("2012-12-12")            // required
 ;
 $request = $order->useInvoicePayment();     // requires the above attributes in the order
@@ -859,7 +859,7 @@ where the response can be parsed using the SveaResponse class.
         ->addFee( $shippingfee )            // optional, see WebPayItem for invoice, shipping fee
         ->addDiscount( $discount )          // optional, see WebPayItem for fixed, relative discount
         ->addCustomerDetails( $customer )   // required for invoice and payment plan payments, see WebPayItem for individual, company id.
-        ->setCountryCode("SE")              // required
+        ->setCountryCode("SE")              // required* Optional for hosted payments when using implementation of ConfigurationProvider Interface
         ->setOrderDate(date('c'))           // required for invoice and payment plan payments
         ->setCurrency("SEK")                // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
         ->setClientOrderNumber("A123456")   // required for card payment, direct payment, PaymentMethod & PayPage payments, max length 30 chars.
