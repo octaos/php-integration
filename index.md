@@ -50,6 +50,7 @@ layout: index
     * [7.5 WebPayAdmin::addOrderRows()](http://sveawebpay.github.io/php-integration#i75)
     * [7.6 WebPayAdmin::updateOrderRows()](http://sveawebpay.github.io/php-integration#i76)
     * [7.7 WebPayAdmin::deliverOrderRows()](http://sveawebpay.github.io/php-integration#i77)
+    * [7.8 WebPayAdmin::updateOrder()](http://sveawebpay.github.io/php-integration#i78)
 * [8. SveaResponse](http://sveawebpay.github.io/php-integration#i8)
     * [8.1. Parsing an asynchronous service response](http://sveawebpay.github.io/php-integration#i81)
     * [8.2. Response accepted and result code](http://sveawebpay.github.io/php-integration#i82)
@@ -1213,6 +1214,7 @@ The WebPayAdmin class methods are used to administrate orders after they have be
 * [7.5 WebPayAdmin::addOrderRows()](http://sveawebpay.github.io/php-integration#i75)
 * [7.6 WebPayAdmin::updateOrderRows()](http://sveawebpay.github.io/php-integration#i76)
 * [7.7 WebPayAdmin::deliverOrderRows()](http://sveawebpay.github.io/php-integration#i77)
+* [7.8 WebPayAdmin::updateOrder()](http://sveawebpay.github.io/php-integration#i78)
 
 ### 7.1 WebPayAdmin::cancelOrder() <a name="i71"></a>
 
@@ -1559,6 +1561,36 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.AdminS
 See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.HostedService.ConfirmTransactionResponse.html" target="_blank">ConfirmTransactionResponse</a> for card orders response.
 
 [<< To index](http://sveawebpay.github.io/php-integration#index)
+
+### 7.8 WebPayAdmin::updateOrder() <a name="i78"></a>
+    The WebPayAdmin::updateOrder() method is used to add or change ClientOrderNumber and/or Notes.
+    Supports invoice and payment plan orders.
+
+    Get an order builder instance using the WebPayAdmin::updateOrder() entrypoint, then provide more information
+    about the transaction and send the request using the UpdateOrderBuilder methods:
+
+    Use setCountryCode() to specify the country code matching the original create order request.
+    Use setOrderId() to specify which order
+    Use setClientOrderNumber() if you want to add or change the client order number.
+    Use setNotes() if you want to add or change the Notes on invoice from client to customer.
+    Then use either updateInvoiceOrder() or updatePaymentPlanOrder() to get a request object, which ever
+    matches the payment method used in the original order.
+
+    Calling doRequest() on the request object will send the request to Svea and return UpdateOrderResponse.
+
+```php
+...
+        $request = WebPayAdmin.updateOrder($config)
+              ->setOrderId()               // required
+              ->setCountryCode()           // required
+              ->setClientOrderNumber() // optional
+              ->setNotes()           // optional
+          ;
+          // then select the corresponding request class and send request
+          $response = $request->updateInvoiceOrder()->doRequest();     // returns UpdateOrderResponse
+          $response = $request->updatePaymentPlanOrder()->doRequest(); // returns UpdateOrderResponse
+...
+```
 
 ## 8. SveaResponse and response classes <a name="i8"></a>
 
