@@ -284,10 +284,10 @@ Set any additional attributes needed to complete the order using the OrderBuilde
 ...
 $order
     ...
-    ->setCountryCode("SE")                  // required* Optional for hosted payments when using implementation of ConfigurationProvider Interface
+    ->setCountryCode("SE")                  // required, Optional for hosted payments when using implementation of ConfigurationProvider Interface
     ->setCurrency("SEK")                    // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
-    ->setClientOrderNumber("A123456")       // required for card payment, direct payment, PaymentMethod & PayPage payments, max length 30 chars.
-    ->setCustomerReference("att: kgm")      // optional, ignored for card & direct bank orders, max length 30 chars.
+    ->setClientOrderNumber("A123456")       // required for card payment, direct payment, PaymentMethod & PayPage payments, String(32).
+    ->setCustomerReference("att: kgm")      // optional for invoice and payment plan, String(32). Ignored for card & direct bank orders.
     ->setOrderDate("2012-12-12")            // required for invoice and payment plan payments
 ;
 ...
@@ -504,11 +504,10 @@ Send user to *PayPage* to select from available cards (only), and then perform a
 ...
 $form = $order
     ->usePayPageCardOnly()
-        ->setPayPageLanguage("sv")                          // Optional, default english
+        ->setPayPageLanguage("sv")                          // Optional, languageCode As ISO639, eg. "en", default english
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCallbackUrl("http://myurl.se")                 // Optional
         ->setCancelUrl("http://myurl.se")                   // Optional
-        ->setCall("http://myurl.se")                        // Optional
         ->getPaymentForm();
 ...
 ```
@@ -523,7 +522,7 @@ Send user to *PayPage* to select from available banks (only), and then perform a
 ...
 $form = $order
     ->usePayPageDirectBankOnly()
-        ->setPayPageLanguage("sv")                          // Optional, default english
+        ->setPayPageLanguage("sv")                          // Optional, languageCode As ISO639, eg. "en", default english
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
         ->getPaymentForm()
@@ -539,7 +538,7 @@ Send user to *PayPage* to select from the available payment methods.
 ...
 $form = $order
     ->usePayPage()
-        ->setPayPageLanguage("sv")                          // Optional, defaults to english
+        ->setPayPageLanguage("sv")                          // Optional, languageCode As ISO639, eg. "en", default english
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
         ->getPaymentForm()
@@ -608,14 +607,14 @@ quantities of an item, as the package bases the total order sum on a calculated 
 <?php
 ...
      $orderrow = WebPayItem::orderRow()
-         ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
-         ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
-         ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
+         ->setAmountExVat(100.00)        // optional, Float, recommended, use precisely two of the price specification methods
+         ->setVatPercent(25)             // optional, Integer, recommended, use precisely two of the price specification methods
+         ->setAmountIncVat(125.00)       // optional, Float, use precisely two of the price specification methods
          ->setQuantity(2)                // required
-         ->setUnit("pcs.")               // optional
-         ->setName('name')               // optional, invoice & payment plan orders will merge "name" with "description"
-         ->setDescription("description") // optional, invoice & payment plan orders will merge "name" with "description"
-         ->setArticleNumber("1")         // optional
+         ->setUnit("pcs")               // optional, String(3) for invoice and paymentplan, String(64) for card and direkt bank
+         ->setName('name')               // optional, invoice & payment plan orders will merge "name" with "description", String(256) for card and direct
+         ->setDescription("description") // optional, String(40) for invoice & payment plan orders will merge "name" with "description" , String(512) for card and direct
+         ->setArticleNumber("1")         // optional, String(10) for invoice and payment plan, String (256) for card and direct
          ->setDiscountPercent(0)         // optional
      );
 ...
@@ -636,12 +635,12 @@ setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setA
 <?php
 ...
      $shippingFee = WebPayItem::shippingFee()
-         ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
-         ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
-         ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
-         ->setUnit("pcs.")               // optional
-         ->setName('name')               // optional
-         ->setDescription("description") // optional
+         ->setAmountExVat(100.00)       //  optional, Float, recommended, use precisely two of the price specification methods
+         ->setVatPercent(25)             // optional, Integer, recommended, use precisely two of the price specification methods
+         ->setAmountIncVat(125.00)       // optional, Float, use precisely two of the price specification methods
+         ->setUnit("pcs")               // optional, String(3) for invoice and paymentplan, String(64) for card and direkt bank
+         ->setName('name')              // optional, invoice & payment plan orders will merge "name" with "description", String(256) for card and direct
+         ->setDescription("description") // optional, String(40) for invoice & payment plan orders will merge "name" with "description" , String(512) for card and direct
          ->setShippingId('33')           // optional
          ->setDiscountPercent(0)         // optional
      );
@@ -663,12 +662,12 @@ setAmountExVat(), setAmountIncVat() and setVatPercent(). We recommend using setA
 <?php
 ...
      $invoiceFee = WebPayItem::invoiceFee()
-         ->setAmountExVat(100.00)        // optional, recommended, use precisely two of the price specification methods
-         ->setVatPercent(25)             // optional, recommended, use precisely two of the price specification methods
-         ->setAmountIncVat(125.00)       // optional, use precisely two of the price specification methods
-         ->setUnit("pcs.")               // optional
-         ->setName('name')               // optional
-         ->setDescription("description") // optional
+         ->setAmountExVat(100.00)        // optional, Float, recommended, use precisely two of the price specification methods
+         ->setVatPercent(25)             // optional, Integer, recommended, use precisely two of the price specification methods
+         ->setAmountIncVat(125.00)       // optional, Float, use precisely two of the price specification methods
+         ->setUnit("pcs")               // optional, String(3)
+         ->setName('name')               // optional, will merge "name" with "description"
+         ->setDescription("description") // optional, String(40) will merge "name" with "description"
          ->setDiscountPercent(0)         // optional
      );
 ...
@@ -692,13 +691,13 @@ If two of these three attributes are specified, we honour the amount indicated a
 <?php
 ...
      $fixedDiscount = WebPayItem::fixedDiscount()
-         ->setAmountIncVat(100.00)               // recommended, see info above
-         ->setAmountExVat(1.0)                   // optional, see info above
-         ->setVatPercent(25)                     // optional, see info above
+         ->setAmountIncVat(100.00)               // optional, Float, use precisely two of the price specification methods
+         ->setAmountExVat(1.0)                   // optional, Float, recommended, use precisely two of the price specification methods
+         ->setVatPercent(25)                     // optional, Integer, recommended, use precisely two of the price specification methods
          ->setDiscountId("1")                    // optional
          ->setUnit("st")                         // optional
-         ->setName("Fixed")                      // optional
-         ->setDescription("FixedDiscount")       // optional
+         ->setName("Fixed")                      // optional, invoice & payment plan orders will merge "name" with "description", String(256) for card and direct
+         ->setDescription("FixedDiscount")       // optional, String(40) for invoice & payment plan orders will merge "name" with "description" , String(512) for card and direct
      );
 ...
 ```
@@ -723,8 +722,9 @@ Specify the discount using RelativeDiscount methods:
         ->setDiscountPercent(10.0)          // required
         ->setDiscountId("1")                // optional
         ->setUnit("st.")                    // optional
-        ->setName("DiscountName")           // optional
-        ->setDescription("DiscountDesc.")   // optional
+        ->setName("DiscountName")           // optional, invoice & payment plan orders will merge "name" with "description", String(256) for card and direct
+        ->setDescription("DiscountDesc.")   // optional, String(40) for invoice & payment plan orders will merge "name" with "description" , String(512) for card and direct
+     );
     );
 ...
 ```
@@ -863,8 +863,8 @@ where the response can be parsed using the SveaResponse class.
         ->setCountryCode("SE")              // required* Optional for hosted payments when using implementation of ConfigurationProvider Interface
         ->setOrderDate(date('c'))           // required for invoice and payment plan payments
         ->setCurrency("SEK")                // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
-        ->setClientOrderNumber("A123456")   // required for card payment, direct payment, PaymentMethod & PayPage payments, max length 30 chars.
-        ->setCustomerReference("att: kgm")  // optional, ignored for card & direct bank orders, max length 30 chars.
+        ->setClientOrderNumber("A123456")   // required for card payment, direct payment String(65), Optional for Invoice and Payment plan String(32).
+        ->setCustomerReference("att: kgm")  // optional for invoice and payment plan String(32), ignored for card & direct bank orders, max length 30 chars.
      ;
 ...
 ```
@@ -1583,8 +1583,8 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Hosted
         $request = WebPayAdmin.updateOrder($config)
               ->setOrderId()               // required
               ->setCountryCode()           // required
-              ->setClientOrderNumber() // optional
-              ->setNotes()           // optional
+              ->setClientOrderNumber() // optional String(32)
+              ->setNotes()           // optional String(200)
           ;
           // then select the corresponding request class and send request
           $response = $request->updateInvoiceOrder()->doRequest();     // returns UpdateOrderResponse
