@@ -286,8 +286,8 @@ $order
     ...
     ->setCountryCode("SE")                  // required, Optional for hosted payments when using implementation of ConfigurationProvider Interface
     ->setCurrency("SEK")                    // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
-    ->setClientOrderNumber("A123456")       // required for card payment, direct payment, PaymentMethod & PayPage payments, String(32).
-    ->setCustomerReference("att: kgm")      // optional for invoice and payment plan, String(32). Ignored for card & direct bank orders.
+    ->setClientOrderNumber("A123456")       // Required for card payment, direct payment, Unique String(65). Optional for Invoice and Payment plan String(32).
+    ->setCustomerReference("att: kgm")      // Optional for invoice and payment plan String(32), ignored for card & direct bank orders.
     ->setOrderDate("2012-12-12")            // required for invoice and payment plan payments
 ;
 ...
@@ -863,8 +863,8 @@ where the response can be parsed using the SveaResponse class.
         ->setCountryCode("SE")              // required* Optional for hosted payments when using implementation of ConfigurationProvider Interface
         ->setOrderDate(date('c'))           // required for invoice and payment plan payments
         ->setCurrency("SEK")                // required for card payment, direct bank & PayPage payments. Ignored for invoice and payment plan.
-        ->setClientOrderNumber("A123456")   // required for card payment, direct payment String(65), Optional for Invoice and Payment plan String(32).
-        ->setCustomerReference("att: kgm")  // optional for invoice and payment plan String(32), ignored for card & direct bank orders, max length 30 chars.
+        ->setClientOrderNumber("A123456")   // Required for card payment, direct payment, Unique String(65). Optional for Invoice and Payment plan String(32).
+        ->setCustomerReference("att: kgm")  // Optional for invoice and payment plan String(32), ignored for card & direct bank orders.
      ;
 ...
 ```
