@@ -423,7 +423,7 @@ Get a html form containing the request XML data. The form is an instance of Paym
 <?php
 ...
 $form = $order
-    ->usePaymentMethod(PaymentMethod::KORTCERT)             // Card payment, get available providers using WebPay::listPaymentMethods()
+    ->usePaymentMethod(PaymentMethod::SVEACARDPAY)          // Card payment, get available providers using WebPay::listPaymentMethods()
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
         ->setCardPageLanguage("se")                         // Optional, languageCode As ISO639, eg. "en", default english
@@ -445,7 +445,7 @@ $form = $order
         ...
         ->setIpAddress()                                    // Required
         ...
-    ->usePaymentMethod(PaymentMethod::KORTCERT)             // Card payment, get available providers using WebPay::listPaymentMethods()
+    ->usePaymentMethod(PaymentMethod::SVEACARDPAY)          // Card payment, get available providers using WebPay::listPaymentMethods()
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
         ->setCardPageLanguage("sv")                         // Required, languageCode As ISO639, eg. "en", default english
@@ -488,7 +488,7 @@ You can use `WebPay::listPaymentMethods()` to get the various payment methods av
 <?php
 ...
 $form = $order
-    ->usePaymentMethod(PaymentMethod::KORTCERT)             // Use WebPay::listPaymentMethods() to get available payment methods
+    ->usePaymentMethod(PaymentMethod::SVEACARDPAY)          // Use WebPay::listPaymentMethods() to get available payment methods
         ->setReturnUrl("http://myurl.se")                   // Required
         ->setCancelUrl("http://myurl.se")                   // Optional
         ->setCardPageLanguage("sv")                         // Optional, languageCode As ISO639, eg. "en", default english
