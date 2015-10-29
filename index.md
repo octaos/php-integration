@@ -307,7 +307,7 @@ After selecting an asynchronous payment method you generally use a request class
 #### 3.5.3 Response URL:s
 For asynchronous payment methods, you must specify where to receive the request response. Use the following methods:
 
-`->setReturnUrl()` (required) When a hosted payment transaction completes the payment service will answer with a response xml message sent to the return url. This is also the return url used if the user cancels at i.e. the Certitrade card payment page.
+`->setReturnUrl()` (required) When a hosted payment transaction completes the payment service will answer with a response xml message sent to the return url. This is also the return url used if the user cancels at i.e. the card payment page.
 
 `->setCallbackUrl()` (optional) In case the hosted payment transaction completes, but the service is unable to return a response to the return url, Svea will retry several times using the callback url as a fallback, if specified. This may happen if i.e. the user closes the browser before the payment service redirects back to the shop, or if the transaction times out in lieu of user input. In the latter case, Svea will fail the transaction after at most 30 minutes, and will try to redirect to the callback url.
 
@@ -414,7 +414,7 @@ $response = $request->doRequest();
 ```
 
 ### 4.3 Card payment <a name="i43"></a>
-Select i.e. ->usePaymentMethod(PaymentMethod::KORTCERT) to perform a card payment via the Certitrade card payment provider.
+Select i.e. ->usePaymentMethod(PaymentMethod::SVEACARDPAY) to perform a card payment via the SveaCardPay card payment provider.
 
 #### 4.3.1 ->getPaymentForm()
 Get a html form containing the request XML data. The form is an instance of PaymentForm, and also contains the complete html form as a string along with the form elements in an array.
@@ -1754,9 +1754,9 @@ Which is about as exact as we can get. (Unfortunately there is no way to introdu
 For invoice and direct bank payment methods, the assumed currency is tied to the merchant account (client id), where each account in turn is tied to a specific country. This is why you as the merchant need to specify a country code in the order, and must supply the amount in the corresponding currency (i.e. an invoice order with setCountryCode('SE') is always assumed to be made out in SEK).
 
 *Credit card and direct bank transfer*
-For credit card orders, Svea accepts any currency when specifying the order, and pass the currency and amount on the card Acquirer (Svea uses Certitrade) where the end user enters their account credentials.
+For credit card orders, Svea accepts any currency when specifying the order.
 
-The acquirer in turn asks (via the credit card company) the end user's Issuing bank (i.e. the bank that provides the end user their card) if the transaction is accepted. If so this information is passed on to the merchant via the Acquirer and Svea, and this is the end of the story as far as the end user is concerned.
+The acquirer in turn asks (via the credit card company) the end user's Issuing bank (i.e. the bank that provides the end user their card) if the transaction is accepted. If so this information is passed on to the merchant via Svea, and this is the end of the story as far as the end user is concerned.
 
 The merchant, i.e. your web shop, then receives money from their Acquiring bank. This is usually done nightly, when the acquiring bank (via the credit card company) receives a list of confirmed card transactions for the merchant in question, and pays the merchant accordingly.
 
@@ -1794,6 +1794,7 @@ Used in usePaymentMethod($paymentMethod) and in usePayPage()->includePaymentMeth
 | PaymentMethod::SHB_SE             | Direct bank payment, Handelsbanken, Sweden.   |
 | PaymentMethod::SWEDBANK_SE        | Direct bank payment, Swedbank, Sweden.        |
 | PaymentMethod::KORTCERT           | Card payments, Certitrade.                    |
+| PaymentMethod::SVEACARDPAY        | Card payments, SveaCardPay.                   |
 | PaymentMethod::PAYPAL             | Paypal                                        |
 | PaymentMethod::SKRILL             | Card payment with Dankort, Skrill.            |
 | PaymentMethod::INVOICE            | Invoice by PayPage.                           |
