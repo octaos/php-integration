@@ -3,7 +3,7 @@ layout: index
 ---
 # Svea PHP Integration Package Documentation
 
-## Version 2.2.24
+## Version 2.2.25
 (For the complete class reference, see the <a href="http://sveawebpay.github.io/php-integration/api/index.html" target="_blank">API documentation</a>.)
 
 ## Index <a name="index"></a>
@@ -1579,6 +1579,7 @@ See <a href="http://sveawebpay.github.io/php-integration/api/classes/Svea.Hosted
     Calling doRequest() on the request object will send the request to Svea and return UpdateOrderResponse.
 
 ```php
+<?php
 ...
         $request = WebPayAdmin.updateOrder($config)
               ->setOrderId()               // required
