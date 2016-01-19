@@ -1609,13 +1609,13 @@ transaction and send the request using the CreditAmountBuilder methods:
 ```php
 <?php
 ...
-        $request = WebPayAdmin::creditAmount($config)
-                   ->setContractNumber($deliverorderInfo->contractNumber)
-                   ->setCountryCode('SE')
-                   ->setDescription('credit desc')
-                   ->setAmountIncVat(100);
-
-        $response = $request->cancelPaymentPlanAmount()->doRequest();
+          $credit = WebPayAdmin::creditAmount($config)
+                ->setContractNumber(12345)
+                ->setCountryCode('SE')
+                ->setDescription('credit desc')
+                ->setAmountIncVat(1500.00)
+                    ->creditPaymentPlanAmount()
+                        ->doRequest();
 ...
 ```
 
