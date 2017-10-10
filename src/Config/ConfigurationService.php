@@ -10,6 +10,22 @@ namespace Svea\WebPay\Config;
  */
 class ConfigurationService
 {
+
+    const SWP_TEST_URL = "https://webpaypaymentgatewaytest.svea.com/webpay/payment";
+    const SWP_PROD_URL = "https://webpaypaymentgateway.svea.com/webpay/payment";
+    const SWP_TEST_WS_URL = "https://webpaywsstage.svea.com/SveaWebPay.asmx?WSDL";
+    const SWP_PROD_WS_URL = "https://webpayws.svea.com/SveaWebPay.asmx?WSDL";
+    const SWP_TEST_HOSTED_ADMIN_URL = "https://webpaypaymentgatewaytest.svea.com/webpay/rest/"; // ends with "/" as we need to add request method
+    const SWP_PROD_HOSTED_ADMIN_URL = "https://webpaypaymentgateway.svea.com/webpay/rest/"; // ends with "/" as we need to add request method
+
+    const SWP_TEST_ADMIN_URL = "https://webpayadminservicestage.svea.com/AdminService.svc/backward";
+    const SWP_PROD_ADMIN_URL = "https://webpayadminservice.svea.com/AdminService.svc/backward";
+
+    const SWP_TEST_PREPARED_URL = "https://webpaypaymentgatewaytest.svea.com/webpay/preparedpayment/";
+    const SWP_PROD_PREPARED_URL = "https://webpaypaymentgateway.svea.com/webpay/preparedpayment/";
+
+
+/*
     const SWP_TEST_URL = "https://test.sveaekonomi.se/webpay/payment";
     const SWP_PROD_URL = "https://webpay.sveaekonomi.se/webpay/payment";
     const SWP_TEST_WS_URL = "https://webservices.sveaekonomi.se/webpay_test/SveaWebPay.asmx?WSDL";
@@ -22,7 +38,7 @@ class ConfigurationService
 
     const SWP_TEST_PREPARED_URL = "https://test.sveaekonomi.se/webpay/preparedpayment/";
     const SWP_PROD_PREPARED_URL = "https://webpay.sveaekonomi.se/webpay/preparedpayment/";
-
+*/
 
     /**
      * @return SveaConfigurationProvider
